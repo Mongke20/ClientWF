@@ -13,6 +13,7 @@
 #include <dos.h>
 #include <cstdlib>
 #include <ctime>
+#include "TheChatWindow.h"
 
 
 
@@ -65,16 +66,18 @@ namespace ClientWinForms {
 	protected:
 	private: System::Windows::Forms::Label^ LabelNick;
 	private: System::Windows::Forms::Button^ ToConnect;
-	private: System::Windows::Forms::TextBox^ SendMessage;
-	private: System::Windows::Forms::TextBox^ GetMessage;
-	private: System::Windows::Forms::Button^ ButtonSendMessage;
-	private: System::Windows::Forms::Label^ LabelSendMessageStatus;
-	private: System::Windows::Forms::Label^ LabelSendMessage;
-	private: System::Windows::Forms::Label^ LabelGetMessage;
-	private: System::Windows::Forms::Label^ LabelGetMessageStatus;
+
+
+
+
+
+
+
 	private: System::Windows::Forms::Label^ ConnectionStatus;
 	private: System::Windows::Forms::Label^ ConStatus;
 	private: System::Windows::Forms::Timer^ timer1;
+	private: System::Windows::Forms::Label^ label1;
+	private: System::Windows::Forms::TextBox^ PasswordField;
 	private: System::ComponentModel::IContainer^ components;
 
 	private:
@@ -94,22 +97,17 @@ namespace ClientWinForms {
 			this->NickField = (gcnew System::Windows::Forms::TextBox());
 			this->LabelNick = (gcnew System::Windows::Forms::Label());
 			this->ToConnect = (gcnew System::Windows::Forms::Button());
-			this->SendMessage = (gcnew System::Windows::Forms::TextBox());
-			this->GetMessage = (gcnew System::Windows::Forms::TextBox());
-			this->ButtonSendMessage = (gcnew System::Windows::Forms::Button());
-			this->LabelSendMessageStatus = (gcnew System::Windows::Forms::Label());
-			this->LabelSendMessage = (gcnew System::Windows::Forms::Label());
-			this->LabelGetMessage = (gcnew System::Windows::Forms::Label());
-			this->LabelGetMessageStatus = (gcnew System::Windows::Forms::Label());
 			this->ConnectionStatus = (gcnew System::Windows::Forms::Label());
 			this->ConStatus = (gcnew System::Windows::Forms::Label());
 			this->timer1 = (gcnew System::Windows::Forms::Timer(this->components));
+			this->label1 = (gcnew System::Windows::Forms::Label());
+			this->PasswordField = (gcnew System::Windows::Forms::TextBox());
 			this->SuspendLayout();
 			// 
 			// NickField
 			// 
 			this->NickField->ForeColor = System::Drawing::SystemColors::InactiveCaptionText;
-			this->NickField->Location = System::Drawing::Point(144, 32);
+			this->NickField->Location = System::Drawing::Point(105, 22);
 			this->NickField->Name = L"NickField";
 			this->NickField->Size = System::Drawing::Size(100, 22);
 			this->NickField->TabIndex = 0;
@@ -117,88 +115,27 @@ namespace ClientWinForms {
 			// LabelNick
 			// 
 			this->LabelNick->AutoSize = true;
-			this->LabelNick->Location = System::Drawing::Point(44, 35);
+			this->LabelNick->Location = System::Drawing::Point(48, 25);
 			this->LabelNick->Name = L"LabelNick";
-			this->LabelNick->Size = System::Drawing::Size(94, 17);
+			this->LabelNick->Size = System::Drawing::Size(51, 17);
 			this->LabelNick->TabIndex = 1;
-			this->LabelNick->Text = L"Введите ник:";
+			this->LabelNick->Text = L"Логин:";
 			// 
 			// ToConnect
 			// 
-			this->ToConnect->Location = System::Drawing::Point(250, 28);
+			this->ToConnect->Cursor = System::Windows::Forms::Cursors::Hand;
+			this->ToConnect->Location = System::Drawing::Point(80, 97);
 			this->ToConnect->Name = L"ToConnect";
-			this->ToConnect->Size = System::Drawing::Size(134, 31);
+			this->ToConnect->Size = System::Drawing::Size(131, 34);
 			this->ToConnect->TabIndex = 2;
 			this->ToConnect->Text = L"Подключиться";
 			this->ToConnect->UseVisualStyleBackColor = true;
 			this->ToConnect->Click += gcnew System::EventHandler(this, &MyForm::ToConnect_Click);
 			// 
-			// SendMessage
-			// 
-			this->SendMessage->Location = System::Drawing::Point(27, 143);
-			this->SendMessage->Multiline = true;
-			this->SendMessage->Name = L"SendMessage";
-			this->SendMessage->Size = System::Drawing::Size(278, 91);
-			this->SendMessage->TabIndex = 3;
-			// 
-			// GetMessage
-			// 
-			this->GetMessage->Location = System::Drawing::Point(524, 125);
-			this->GetMessage->Multiline = true;
-			this->GetMessage->Name = L"GetMessage";
-			this->GetMessage->Size = System::Drawing::Size(326, 129);
-			this->GetMessage->TabIndex = 4;
-			// 
-			// ButtonSendMessage
-			// 
-			this->ButtonSendMessage->Location = System::Drawing::Point(311, 168);
-			this->ButtonSendMessage->Name = L"ButtonSendMessage";
-			this->ButtonSendMessage->Size = System::Drawing::Size(118, 31);
-			this->ButtonSendMessage->TabIndex = 5;
-			this->ButtonSendMessage->Text = L"Отправить";
-			this->ButtonSendMessage->UseVisualStyleBackColor = true;
-			this->ButtonSendMessage->Click += gcnew System::EventHandler(this, &MyForm::ButtonSendMessage_Click);
-			// 
-			// LabelSendMessageStatus
-			// 
-			this->LabelSendMessageStatus->AutoSize = true;
-			this->LabelSendMessageStatus->Location = System::Drawing::Point(117, 237);
-			this->LabelSendMessageStatus->Name = L"LabelSendMessageStatus";
-			this->LabelSendMessageStatus->Size = System::Drawing::Size(53, 17);
-			this->LabelSendMessageStatus->TabIndex = 6;
-			this->LabelSendMessageStatus->Text = L"Статус";
-			// 
-			// LabelSendMessage
-			// 
-			this->LabelSendMessage->AutoSize = true;
-			this->LabelSendMessage->Location = System::Drawing::Point(78, 123);
-			this->LabelSendMessage->Name = L"LabelSendMessage";
-			this->LabelSendMessage->Size = System::Drawing::Size(145, 17);
-			this->LabelSendMessage->TabIndex = 7;
-			this->LabelSendMessage->Text = L"Введите сообщение:";
-			// 
-			// LabelGetMessage
-			// 
-			this->LabelGetMessage->AutoSize = true;
-			this->LabelGetMessage->Location = System::Drawing::Point(605, 105);
-			this->LabelGetMessage->Name = L"LabelGetMessage";
-			this->LabelGetMessage->Size = System::Drawing::Size(173, 17);
-			this->LabelGetMessage->TabIndex = 8;
-			this->LabelGetMessage->Text = L"Полученные сообщения:";
-			// 
-			// LabelGetMessageStatus
-			// 
-			this->LabelGetMessageStatus->AutoSize = true;
-			this->LabelGetMessageStatus->Location = System::Drawing::Point(668, 257);
-			this->LabelGetMessageStatus->Name = L"LabelGetMessageStatus";
-			this->LabelGetMessageStatus->Size = System::Drawing::Size(53, 17);
-			this->LabelGetMessageStatus->TabIndex = 9;
-			this->LabelGetMessageStatus->Text = L"Статус";
-			// 
 			// ConnectionStatus
 			// 
 			this->ConnectionStatus->AutoSize = true;
-			this->ConnectionStatus->Location = System::Drawing::Point(12, 366);
+			this->ConnectionStatus->Location = System::Drawing::Point(28, 175);
 			this->ConnectionStatus->Name = L"ConnectionStatus";
 			this->ConnectionStatus->Size = System::Drawing::Size(176, 17);
 			this->ConnectionStatus->TabIndex = 10;
@@ -207,30 +144,39 @@ namespace ClientWinForms {
 			// ConStatus
 			// 
 			this->ConStatus->AutoSize = true;
-			this->ConStatus->Location = System::Drawing::Point(194, 366);
+			this->ConStatus->Location = System::Drawing::Point(210, 175);
 			this->ConStatus->Name = L"ConStatus";
 			this->ConStatus->Size = System::Drawing::Size(75, 17);
 			this->ConStatus->TabIndex = 11;
 			this->ConStatus->Text = L"Отключен";
 			// 
-			// timer1
+			// label1
 			// 
-			this->timer1->Tick += gcnew System::EventHandler(this, &MyForm::Timer1_Tick);
+			this->label1->AutoSize = true;
+			this->label1->Location = System::Drawing::Point(38, 60);
+			this->label1->Name = L"label1";
+			this->label1->Size = System::Drawing::Size(61, 17);
+			this->label1->TabIndex = 13;
+			this->label1->Text = L"Пароль:";
+			// 
+			// PasswordField
+			// 
+			this->PasswordField->ForeColor = System::Drawing::SystemColors::InactiveCaptionText;
+			this->PasswordField->Location = System::Drawing::Point(105, 60);
+			this->PasswordField->Name = L"PasswordField";
+			this->PasswordField->PasswordChar = '*';
+			this->PasswordField->Size = System::Drawing::Size(100, 22);
+			this->PasswordField->TabIndex = 14;
 			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(893, 392);
+			this->ClientSize = System::Drawing::Size(313, 215);
+			this->Controls->Add(this->PasswordField);
+			this->Controls->Add(this->label1);
 			this->Controls->Add(this->ConStatus);
 			this->Controls->Add(this->ConnectionStatus);
-			this->Controls->Add(this->LabelGetMessageStatus);
-			this->Controls->Add(this->LabelGetMessage);
-			this->Controls->Add(this->LabelSendMessage);
-			this->Controls->Add(this->LabelSendMessageStatus);
-			this->Controls->Add(this->ButtonSendMessage);
-			this->Controls->Add(this->GetMessage);
-			this->Controls->Add(this->SendMessage);
 			this->Controls->Add(this->ToConnect);
 			this->Controls->Add(this->LabelNick);
 			this->Controls->Add(this->NickField);
@@ -256,6 +202,8 @@ namespace ClientWinForms {
 		int recvbuflen = DEFAULT_BUFLEN;
 		void EnterName(SOCKET ConSock) {
 			std::string username = SystemToStl(NickField->Text);
+			username += "@";
+			username += SystemToStl(PasswordField->Text);
 			int name_size = username.size() + 1;
 			// Отправка имени серверу
 			iResult = send(ConSock, (char*)& name_size, sizeof(int), 0);
@@ -281,6 +229,7 @@ namespace ClientWinForms {
 			delete[]Status;
 			return StatusStr;
 		}
+		
 		void receiver() {	
 			try {
 				int msg_size;
@@ -317,55 +266,7 @@ namespace ClientWinForms {
 				return;
 			}
 		}
-		void TheSender() {
-			try {
-				std::string str;
-				int target_size;
-				int msg_size;
-				std::string mark0, mark1, target_name, msg;
-				// Ввод сообщения и разделение его на ник получателя, сообщение и слова-маркеры
-				str = SystemToStl(SendMessage->Text);
-				std::stringstream ss(str);
-				ss >> mark0;
-				ss >> target_name;
-				ss >> mark1;
-				//Для пропуска одного смвола после слова msg (ПРОБЕЛА)
-				ss.ignore(1);
-				std::getline(ss, msg);
-				while (mark0 != "to" || mark1 != "msg") {					
-					SendMessage->Text = "Формат ввода для отправки сообщений: \n to NAME msg MESSAGE";
-					str = SystemToStl(SendMessage->Text);
-					std::stringstream ss(str);
-					ss >> mark0;
-					ss >> target_name;
-					ss >> mark1;
-					ss.ignore(1);
-					std::getline(ss, msg);
-				}
-				target_name;
-				msg;
-				target_size = target_name.size() + 1;
-				msg_size = msg.size() + 1;
-				send(ConnectSocket, (char*)& target_size, sizeof(int), 0);
-				send(ConnectSocket, target_name.c_str(), target_size, 0);
-				send(ConnectSocket, (char*)& msg_size, sizeof(int), 0);
-				iResult = send(ConnectSocket, msg.c_str(), msg_size, 0);
-
-				if (iResult > 0) {
-					LabelSendMessageStatus->Text = "Сообщение отправлено";
-				}
-				else if (iResult == 0)
-					LabelSendMessageStatus->Text = "Connection closed\n";
-				else
-					LabelSendMessageStatus->Text = "send failed with error: %d\n";
-
-			}
-			catch (...) {
-				LabelSendMessageStatus->Text = "Server unable";
-				ConStatus->Text = "Отключен";
-				return;
-			}
-		}
+		
 		void Chat() {
 			SetConsoleCP(1251); // Ввод с консоли в кодировке 1251
 			SetConsoleOutputCP(1251);
@@ -381,7 +282,7 @@ namespace ClientWinForms {
 			hints.ai_socktype = SOCK_STREAM;
 			hints.ai_protocol = IPPROTO_TCP;
 			// Resolve the server address and port
-			//185.255.135.230
+			//46.17.104.142
 			//192.168.0.11
 			iResult = getaddrinfo("192.168.0.11", DEFAULT_PORT, &hints, &result);
 			if (iResult != 0) {
@@ -418,7 +319,7 @@ namespace ClientWinForms {
 				WSACleanup();
 				return;
 			}
-
+			
 
 			//идентификация клиента
 			EnterName(ConnectSocket);
@@ -437,63 +338,30 @@ namespace ClientWinForms {
 			welcome[msg_size] = '\0';
 			string WeclomeMsg = welcome;
 			if (iResult > 0) {
-				GetMessage->Text = gcnew System::String(WeclomeMsg.c_str()) + "\r\n";
+				ConStatus->Text = "Подключен";
 			}
+			else ConStatus->Text = "Ошибка";
+
+
+			TheChatWindow^ dlg1 = gcnew TheChatWindow();
+			dlg1->ShowDialog();
+
+
 			ThreadStart^ thrStart = gcnew ThreadStart(this, &MyForm::receiver);
 			Thread^ t1 = gcnew Thread(thrStart);
 			t1->IsBackground = true;
 			t1->Start();
 			timer1->Start();
-			/*
-			MyClass^ mcl = gcnew MyClass;
-			mcl->ConnectSocket = ConnectSocket;
-			ThreadStart^ thrStart = gcnew ThreadStart(mcl,&MyClass::receiver);
-			Thread^ t1 = gcnew Thread(thrStart);
-			t1->IsBackground = true;
-			t1->Start();*/
-			/*
-			MyClass^ mcl = gcnew MyClass;
-			mcl->ConnectSocket = ConnectSocket;
-			Thread^ t = gcnew Thread(gcnew ThreadStart(mcl, &MyClass::receiver));
-			t->Start();*/
-			/*
-			// Отдельный тред с получением сообщений
-
-			//CreateThread(NULL, NULL, &receiver, NULL, NULL, NULL);
-
-
-			//Thread^ myThread = gcnew Thread((this->receiver));
-			/myThread->Start();
-			receiver();
-
-
-
-			// shutdown the connection since no more data will be sent
-			iResult = shutdown(ConnectSocket, SD_SEND);
-			if (iResult == SOCKET_ERROR) {
-				closesocket(ConnectSocket);
-				WSACleanup();
-				return;
-			}
-
-			// cleanup
-			closesocket(ConnectSocket);
-			WSACleanup();
-			*/
+			
 		}
+		
 	private: System::Void ToConnect_Click(System::Object^ sender, System::EventArgs^ e) {
+		
 		Chat();
 		ToConnect->Enabled = false;
 		NickField->Enabled = false;
 	}
-private: System::Void Timer1_Tick(System::Object^ sender, System::EventArgs^ e) {
-	if (CompWith != ToChange) {
-		GetMessage->Text += ToChange + "\r\n";
-		CompWith = ToChange;
-	}
-}
-private: System::Void ButtonSendMessage_Click(System::Object^ sender, System::EventArgs^ e) {
-	TheSender();
-}
+	
+
 };
 }
