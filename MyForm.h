@@ -331,7 +331,7 @@ namespace ClientWinForms {
 				StatusStr = CheckStatus(ConnectSocket);
 			}
 			ConStatus->Text = "Подключен";
-			int msg_size;
+			/*int msg_size;
 			iResult = recv(ConnectSocket, (char*)& msg_size, sizeof(int), 0);
 			char* welcome = new char[msg_size + 1];
 			iResult = recv(ConnectSocket, welcome, msg_size, 0);
@@ -341,7 +341,7 @@ namespace ClientWinForms {
 				ConStatus->Text = "Подключен";
 			}
 			else ConStatus->Text = "Ошибка";
-
+			*/
 
 			TheChatWindow^ dlg1 = gcnew TheChatWindow();
 			dlg1->ShowDialog();
@@ -360,8 +360,7 @@ namespace ClientWinForms {
 		Chat();
 		ToConnect->Enabled = false;
 		NickField->Enabled = false;
-	}
-	
+	}	
 
 };
 }
