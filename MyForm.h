@@ -1,19 +1,20 @@
 #pragma once
 #define WIN32_LEAN_AND_MEAN
-
-#include <windows.h>
+#include "ClientClasses.h"
+#include "TheChatWindow.h"
+/*
 #include <winsock2.h>
 #include <ws2tcpip.h>
+*/
 #include <stdlib.h>
 #include <stdio.h>
-#include <iostream>
 #include <sstream>
 #include <thread>
-#include <string>
 #include <dos.h>
 #include <cstdlib>
 #include <ctime>
-#include "TheChatWindow.h"
+#include <windows.h>
+
 
 
 
@@ -342,11 +343,11 @@ namespace ClientWinForms {
 			}
 			else ConStatus->Text = "Îøèáêà";
 			*/
-
+			d1.TheSock = ConnectSocket;
 			TheChatWindow^ dlg1 = gcnew TheChatWindow();
 			dlg1->ShowDialog();
 
-
+			
 			ThreadStart^ thrStart = gcnew ThreadStart(this, &MyForm::receiver);
 			Thread^ t1 = gcnew Thread(thrStart);
 			t1->IsBackground = true;

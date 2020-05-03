@@ -1,5 +1,7 @@
 #pragma once
-
+#include "ClientClasses.h"
+//#include "MyForm.h"
+using namespace std;
 namespace ClientWinForms {
 
 	using namespace System;
@@ -48,6 +50,7 @@ namespace ClientWinForms {
 	private: System::Windows::Forms::Button^ oldChats;
 	private: System::Windows::Forms::Button^ newChat;
 	private: System::Windows::Forms::TextBox^ ChatUsers;
+	private: System::Windows::Forms::Label^ label1;
 
 	protected:
 
@@ -93,6 +96,7 @@ namespace ClientWinForms {
 			this->usersOnline = (gcnew System::Windows::Forms::Button());
 			this->oldChats = (gcnew System::Windows::Forms::Button());
 			this->newChat = (gcnew System::Windows::Forms::Button());
+			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->tabPage2->SuspendLayout();
 			this->tabControl1->SuspendLayout();
 			this->tabPage1->SuspendLayout();
@@ -162,6 +166,7 @@ namespace ClientWinForms {
 			// 
 			// tabPage1
 			// 
+			this->tabPage1->Controls->Add(this->label1);
 			this->tabPage1->Controls->Add(this->ChatUsers);
 			this->tabPage1->Controls->Add(this->infoTextBox);
 			this->tabPage1->Controls->Add(this->exit);
@@ -179,7 +184,7 @@ namespace ClientWinForms {
 			// ChatUsers
 			// 
 			this->ChatUsers->AcceptsTab = true;
-			this->ChatUsers->Location = System::Drawing::Point(485, 18);
+			this->ChatUsers->Location = System::Drawing::Point(199, 6);
 			this->ChatUsers->Multiline = true;
 			this->ChatUsers->Name = L"ChatUsers";
 			this->ChatUsers->Size = System::Drawing::Size(208, 88);
@@ -232,6 +237,16 @@ namespace ClientWinForms {
 			this->newChat->UseVisualStyleBackColor = true;
 			this->newChat->Click += gcnew System::EventHandler(this, &TheChatWindow::NewChat_Click);
 			// 
+			// label1
+			// 
+			this->label1->AutoSize = true;
+			this->label1->Location = System::Drawing::Point(426, 227);
+			this->label1->Name = L"label1";
+			this->label1->Size = System::Drawing::Size(46, 17);
+			this->label1->TabIndex = 6;
+			this->label1->Text = L"label1";
+			this->label1->MouseClick += gcnew System::Windows::Forms::MouseEventHandler(this, &TheChatWindow::Label1_MouseClick);
+			// 
 			// TheChatWindow
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
@@ -249,13 +264,55 @@ namespace ClientWinForms {
 
 		}
 #pragma endregion
+		//////////////////////////////////////////////////////////
+		//														//
+		//														//
+		// Код = -10 : создать новый чат						//
+		//														//
+		//														//
+		//														//
+		// Код = -100: Отобразить список чатов					//
+		//														//
+		//														//
+		//														//
+		//														//
+		//														//
+		// Код = -1000 Отобразить пользователей онлайн			//
+		//														//
+		//														//
+		//														//
+		//														//
+		//////////////////////////////////////////////////////////
+	string SystemToStl(String^ s) {
+		using namespace Runtime::InteropServices;
+		const char* ptr = (const char*)(Marshal::StringToHGlobalAnsi(s)).ToPointer();
+		return string(ptr);
+	}
+	string GetMessage() {
+		int msgS = 0;
+		recv(d1.TheSock, (char*)& msgS, sizeof(int), 0);
+		char* msg = new char[msgS + 2];
+		int iResult = recv(d1.TheSock, msg, msgS, 0);
+		msg[msgS] = '\n';
+		msg[msgS + 1] = '\0';
+		string msgStr = msg;
+		return msgStr;
+	}
 	private: System::Void NewChat_Click(System::Object^ sender, System::EventArgs^ e) {
 		if (ChatUsers->Text->Length == 0 || ChatUsers->Text=="Введите пользователей") {
 			ChatUsers->Text = "Введите пользователей";
 		}
 		else {
+			MsgCl NewChat;
+			NewChat.code = -10;
+			NewChat.text = SystemToStl(ChatUsers->Text);
+			NewChat.Send();
+			string users = GetMessage();
 			tabControl1->SelectedIndex = 1;
 		}
 	}
+private: System::Void Label1_MouseClick(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e) {
+	label1->Text = "clicked";
+}
 };
 }

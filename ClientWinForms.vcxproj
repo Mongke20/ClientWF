@@ -141,6 +141,7 @@
     <ClCompile Include="TheChatWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ClientClasses.h" />
     <ClInclude Include="MyForm.h">
       <FileType>CppForm</FileType>
     </ClInclude>
