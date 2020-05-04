@@ -1,7 +1,19 @@
 #pragma once
+#define WIN32_LEAN_AND_MEAN
 #include "ClientClasses.h"
 //#include "MyForm.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <sstream>
+#include <thread>
+#include <dos.h>
+#include <cstdlib>
+#include <ctime>
+#include <windows.h>
 using namespace std;
+#pragma comment (lib, "Ws2_32.lib")
+#pragma comment (lib, "Mswsock.lib")
+#pragma comment (lib, "AdvApi32.lib")
 namespace ClientWinForms {
 
 	using namespace System;
@@ -10,6 +22,7 @@ namespace ClientWinForms {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+	using namespace System::Threading;
 
 	/// <summary>
 	/// Сводка для TheChatWindow
@@ -51,6 +64,8 @@ namespace ClientWinForms {
 	private: System::Windows::Forms::Button^ newChat;
 	private: System::Windows::Forms::TextBox^ ChatUsers;
 	private: System::Windows::Forms::Label^ label1;
+	private: System::Windows::Forms::Timer^ timer1;
+	private: System::ComponentModel::IContainer^ components;
 
 	protected:
 
@@ -74,7 +89,7 @@ namespace ClientWinForms {
 		/// <summary>
 		/// Обязательная переменная конструктора.
 		/// </summary>
-		System::ComponentModel::Container ^components;
+
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -83,6 +98,7 @@ namespace ClientWinForms {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			this->components = (gcnew System::ComponentModel::Container());
 			this->tabPage2 = (gcnew System::Windows::Forms::TabPage());
 			this->usersInChat = (gcnew System::Windows::Forms::TextBox());
 			this->oldMessages = (gcnew System::Windows::Forms::TextBox());
@@ -90,13 +106,14 @@ namespace ClientWinForms {
 			this->sendMessage = (gcnew System::Windows::Forms::Button());
 			this->tabControl1 = (gcnew System::Windows::Forms::TabControl());
 			this->tabPage1 = (gcnew System::Windows::Forms::TabPage());
+			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->ChatUsers = (gcnew System::Windows::Forms::TextBox());
 			this->infoTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->exit = (gcnew System::Windows::Forms::Button());
 			this->usersOnline = (gcnew System::Windows::Forms::Button());
 			this->oldChats = (gcnew System::Windows::Forms::Button());
 			this->newChat = (gcnew System::Windows::Forms::Button());
-			this->label1 = (gcnew System::Windows::Forms::Label());
+			this->timer1 = (gcnew System::Windows::Forms::Timer(this->components));
 			this->tabPage2->SuspendLayout();
 			this->tabControl1->SuspendLayout();
 			this->tabPage1->SuspendLayout();
@@ -181,6 +198,16 @@ namespace ClientWinForms {
 			this->tabPage1->Text = L"Menu";
 			this->tabPage1->UseVisualStyleBackColor = true;
 			// 
+			// label1
+			// 
+			this->label1->AutoSize = true;
+			this->label1->Location = System::Drawing::Point(426, 227);
+			this->label1->Name = L"label1";
+			this->label1->Size = System::Drawing::Size(46, 17);
+			this->label1->TabIndex = 6;
+			this->label1->Text = L"label1";
+			this->label1->MouseClick += gcnew System::Windows::Forms::MouseEventHandler(this, &TheChatWindow::Label1_MouseClick);
+			// 
 			// ChatUsers
 			// 
 			this->ChatUsers->AcceptsTab = true;
@@ -237,15 +264,9 @@ namespace ClientWinForms {
 			this->newChat->UseVisualStyleBackColor = true;
 			this->newChat->Click += gcnew System::EventHandler(this, &TheChatWindow::NewChat_Click);
 			// 
-			// label1
+			// timer1
 			// 
-			this->label1->AutoSize = true;
-			this->label1->Location = System::Drawing::Point(426, 227);
-			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(46, 17);
-			this->label1->TabIndex = 6;
-			this->label1->Text = L"label1";
-			this->label1->MouseClick += gcnew System::Windows::Forms::MouseEventHandler(this, &TheChatWindow::Label1_MouseClick);
+			this->timer1->Tick += gcnew System::EventHandler(this, &TheChatWindow::Timer1_Tick);
 			// 
 			// TheChatWindow
 			// 
@@ -255,6 +276,7 @@ namespace ClientWinForms {
 			this->Controls->Add(this->tabControl1);
 			this->Name = L"TheChatWindow";
 			this->Text = L"TheChatWindow";
+			this->Load += gcnew System::EventHandler(this, &TheChatWindow::TheChatWindow_Load);
 			this->tabPage2->ResumeLayout(false);
 			this->tabPage2->PerformLayout();
 			this->tabControl1->ResumeLayout(false);
@@ -268,7 +290,7 @@ namespace ClientWinForms {
 		//														//
 		//														//
 		// Код = -10 : создать новый чат						//
-		//														//
+		// Код = -20 : Получить последние 10 сообщений в чате	//
 		//														//
 		//														//
 		// Код = -100: Отобразить список чатов					//
@@ -283,6 +305,9 @@ namespace ClientWinForms {
 		//														//
 		//														//
 		//////////////////////////////////////////////////////////
+	String^ ToChange;
+	String^ CompWith;
+	int chatSend;
 	string SystemToStl(String^ s) {
 		using namespace Runtime::InteropServices;
 		const char* ptr = (const char*)(Marshal::StringToHGlobalAnsi(s)).ToPointer();
@@ -298,21 +323,92 @@ namespace ClientWinForms {
 		string msgStr = msg;
 		return msgStr;
 	}
+	void receiver() {
+		try {
+			int msg_size;
+			int name_size;
+			int iResult = 0;
+			do {
+				// Получение имени отправителя
+				recv(d1.TheSock, (char*)& name_size, sizeof(int), 0);
+				char* name = new char[name_size + 2];
+				iResult = recv(d1.TheSock, name, name_size, 0);
+				name[name_size] = '\n';
+				name[name_size + 1] = '\0';
+				// Получение сообщения
+				recv(d1.TheSock, (char*)& msg_size, sizeof(int), 0);
+				char* answer = new char[msg_size + 2];
+				iResult = recv(d1.TheSock, answer, msg_size, 0);
+				answer[msg_size] = '\n';
+				answer[msg_size + 1] = '\0';
+				if (iResult > 0) {
+					std::string Got_Msg = answer;
+					std::string Got_Nm = name;
+					Got_Msg = "from " + Got_Nm + " msg " + Got_Msg;
+					ToChange = gcnew System::String(Got_Msg.c_str());
+
+				}
+				else if (iResult == 0) {
+				}
+				else {
+					//ConStatus->Text = "Error";
+				}
+				delete[] answer;
+			} while (iResult > 0);
+		}
+		catch (...) {
+			//ConStatus->Text = "Server unable";
+			return;
+		}
+	}
+	void TheSender() {
+		try {
+			std::string str;
+			// Ввод сообщения и разделение его на ник получателя, сообщение и слова-маркеры
+			str = SystemToStl(newMessage->Text);
+			MsgCl(chatSend, str);
+		}
+		catch (...) {
+			return;
+		}
+	}
 	private: System::Void NewChat_Click(System::Object^ sender, System::EventArgs^ e) {
 		if (ChatUsers->Text->Length == 0 || ChatUsers->Text=="Введите пользователей") {
 			ChatUsers->Text = "Введите пользователей";
 		}
 		else {
-			MsgCl NewChat;
-			NewChat.code = -10;
-			NewChat.text = SystemToStl(ChatUsers->Text);
+			MsgCl NewChat(-10, SystemToStl(ChatUsers->Text));
 			NewChat.Send();
-			string users = GetMessage();
-			tabControl1->SelectedIndex = 1;
+			string id = GetMessage();
+			if (id[0] >= '0' && id[0] <= '9') {
+				tabControl1->SelectedIndex = 1;
+				chatSend = stoi(id);
+				usersInChat->Text = ChatUsers->Text;
+				//MsgCl GetStory(-20,id);
+				
+			}
+			else ChatUsers->Text = gcnew System::String(id.c_str());
 		}
 	}
 private: System::Void Label1_MouseClick(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e) {
 	label1->Text = "clicked";
+}
+private: System::Void TheChatWindow_Load(System::Object^ sender, System::EventArgs^ e) {
+	/*MsgCl getChats(-100, "");
+	MsgCl getUsers(-1000, "");
+	getChats.Send();
+	getUsers.Send();*/
+	/*ThreadStart^ thrStart = gcnew ThreadStart(this, &TheChatWindow::receiver);
+	Thread^ t1 = gcnew Thread(thrStart);
+	t1->IsBackground = true;
+	t1->Start();*/
+}
+private: System::Void Timer1_Tick(System::Object^ sender, System::EventArgs^ e) {
+	if (CompWith != ToChange) {
+		oldMessages->Text += ToChange + "\r\n";
+		CompWith = ToChange;
+	}
+	
 }
 };
 }

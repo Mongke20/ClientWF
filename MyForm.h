@@ -348,11 +348,11 @@ namespace ClientWinForms {
 			dlg1->ShowDialog();
 
 			
-			ThreadStart^ thrStart = gcnew ThreadStart(this, &MyForm::receiver);
+			/*ThreadStart^ thrStart = gcnew ThreadStart(this, &MyForm::receiver);
 			Thread^ t1 = gcnew Thread(thrStart);
 			t1->IsBackground = true;
 			t1->Start();
-			timer1->Start();
+			timer1->Start();*/
 			
 		}
 		

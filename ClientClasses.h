@@ -14,10 +14,18 @@ MyFormData d1;
 //Класс для хранения, генерации и отправки запросов серверу
 class MsgCl {
 public:
+	MsgCl() {
+		code = -666;
+		text = "-666";
+	}
+	MsgCl(int c, string t) {
+		code = c;
+		text = t;
+	}
 	//Поле с кодом запроса
-	int code = -666;
+	int code;
 	//Поле с сообщением запроса
-	string text = "-666";
+	string text;
 	//Метод для склейки полей
 	string GenerateMsg() {
 		string TheMsg = to_string(code) + "@" + text;
@@ -28,7 +36,7 @@ public:
 		//проверка на пустоту полей
 		if (code != -666 && text != "-666") {
 			string msg = GenerateMsg();
-			int sizeM = msg.size() + 1;
+			int sizeM = msg.size() + 1;			
 			int Result = send(d1.TheSock, (char*)& sizeM, sizeof(int), 0);
 			if (Result == SOCKET_ERROR) {
 
