@@ -63,8 +63,13 @@ namespace ClientWinForms {
 	private: System::Windows::Forms::Button^ oldChats;
 	private: System::Windows::Forms::Button^ newChat;
 	private: System::Windows::Forms::TextBox^ ChatUsers;
-	private: System::Windows::Forms::Label^ label1;
+
 	private: System::Windows::Forms::Timer^ timer1;
+	private: System::Windows::Forms::Label^ label1;
+	private: System::Windows::Forms::TextBox^ ChatList;
+	private: System::Windows::Forms::TextBox^ UserList;
+	private: System::Windows::Forms::Label^ label2;
+
 	private: System::ComponentModel::IContainer^ components;
 
 	protected:
@@ -106,6 +111,8 @@ namespace ClientWinForms {
 			this->sendMessage = (gcnew System::Windows::Forms::Button());
 			this->tabControl1 = (gcnew System::Windows::Forms::TabControl());
 			this->tabPage1 = (gcnew System::Windows::Forms::TabPage());
+			this->UserList = (gcnew System::Windows::Forms::TextBox());
+			this->ChatList = (gcnew System::Windows::Forms::TextBox());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->ChatUsers = (gcnew System::Windows::Forms::TextBox());
 			this->infoTextBox = (gcnew System::Windows::Forms::TextBox());
@@ -114,6 +121,7 @@ namespace ClientWinForms {
 			this->oldChats = (gcnew System::Windows::Forms::Button());
 			this->newChat = (gcnew System::Windows::Forms::Button());
 			this->timer1 = (gcnew System::Windows::Forms::Timer(this->components));
+			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->tabPage2->SuspendLayout();
 			this->tabControl1->SuspendLayout();
 			this->tabPage1->SuspendLayout();
@@ -169,6 +177,7 @@ namespace ClientWinForms {
 			this->sendMessage->TabIndex = 2;
 			this->sendMessage->Text = L"Отправить";
 			this->sendMessage->UseVisualStyleBackColor = true;
+			this->sendMessage->Click += gcnew System::EventHandler(this, &TheChatWindow::SendMessage_Click);
 			// 
 			// tabControl1
 			// 
@@ -183,6 +192,9 @@ namespace ClientWinForms {
 			// 
 			// tabPage1
 			// 
+			this->tabPage1->Controls->Add(this->label2);
+			this->tabPage1->Controls->Add(this->UserList);
+			this->tabPage1->Controls->Add(this->ChatList);
 			this->tabPage1->Controls->Add(this->label1);
 			this->tabPage1->Controls->Add(this->ChatUsers);
 			this->tabPage1->Controls->Add(this->infoTextBox);
@@ -198,23 +210,39 @@ namespace ClientWinForms {
 			this->tabPage1->Text = L"Menu";
 			this->tabPage1->UseVisualStyleBackColor = true;
 			// 
+			// UserList
+			// 
+			this->UserList->Location = System::Drawing::Point(160, 215);
+			this->UserList->Multiline = true;
+			this->UserList->Name = L"UserList";
+			this->UserList->Size = System::Drawing::Size(544, 179);
+			this->UserList->TabIndex = 8;
+			// 
+			// ChatList
+			// 
+			this->ChatList->Location = System::Drawing::Point(160, 6);
+			this->ChatList->Multiline = true;
+			this->ChatList->Name = L"ChatList";
+			this->ChatList->Size = System::Drawing::Size(544, 191);
+			this->ChatList->TabIndex = 7;
+			// 
 			// label1
 			// 
 			this->label1->AutoSize = true;
-			this->label1->Location = System::Drawing::Point(426, 227);
+			this->label1->Location = System::Drawing::Point(502, 240);
 			this->label1->Name = L"label1";
 			this->label1->Size = System::Drawing::Size(46, 17);
 			this->label1->TabIndex = 6;
 			this->label1->Text = L"label1";
-			this->label1->MouseClick += gcnew System::Windows::Forms::MouseEventHandler(this, &TheChatWindow::Label1_MouseClick);
 			// 
 			// ChatUsers
 			// 
 			this->ChatUsers->AcceptsTab = true;
-			this->ChatUsers->Location = System::Drawing::Point(199, 6);
+			this->ChatUsers->Enabled = false;
+			this->ChatUsers->Location = System::Drawing::Point(299, 80);
 			this->ChatUsers->Multiline = true;
 			this->ChatUsers->Name = L"ChatUsers";
-			this->ChatUsers->Size = System::Drawing::Size(208, 88);
+			this->ChatUsers->Size = System::Drawing::Size(262, 139);
 			this->ChatUsers->TabIndex = 5;
 			// 
 			// infoTextBox
@@ -253,6 +281,7 @@ namespace ClientWinForms {
 			this->oldChats->TabIndex = 1;
 			this->oldChats->Text = L"Список чатов";
 			this->oldChats->UseVisualStyleBackColor = true;
+			this->oldChats->Click += gcnew System::EventHandler(this, &TheChatWindow::OldChats_Click);
 			// 
 			// newChat
 			// 
@@ -267,6 +296,15 @@ namespace ClientWinForms {
 			// timer1
 			// 
 			this->timer1->Tick += gcnew System::EventHandler(this, &TheChatWindow::Timer1_Tick);
+			// 
+			// label2
+			// 
+			this->label2->AutoSize = true;
+			this->label2->Location = System::Drawing::Point(581, 195);
+			this->label2->Name = L"label2";
+			this->label2->Size = System::Drawing::Size(46, 17);
+			this->label2->TabIndex = 9;
+			this->label2->Text = L"label2";
 			// 
 			// TheChatWindow
 			// 
@@ -305,13 +343,40 @@ namespace ClientWinForms {
 		//														//
 		//														//
 		//////////////////////////////////////////////////////////
+	
 	String^ ToChange;
 	String^ CompWith;
 	int chatSend;
+	int GetChatsCounter = 0;
+	int Entries = 0;
 	string SystemToStl(String^ s) {
 		using namespace Runtime::InteropServices;
 		const char* ptr = (const char*)(Marshal::StringToHGlobalAnsi(s)).ToPointer();
 		return string(ptr);
+	}
+
+	void GetChats() {
+		ChatList->Text = " ";
+		GetChatsCl.code = -100;
+		GetChatsCl.text = " ";
+		GetChatsCl.Send();
+		while (GetChatsCounter!=-1) {
+			label2->Text = "Что-то есть " + Convert::ToString(GetChatsCounter);
+		};
+		ChatList->Text = gcnew System::String(GetChatsCl.text.c_str());
+		GetChatsCounter = 0;
+		GetChatsCl.text = " ";
+	}
+
+	void CUWithLines(String^ froms) {
+		usersInChat->Text = "";
+		for (int i = 0; i < froms->Length; i++) {
+			if (froms[i] == ',') {
+				usersInChat->Text += "\r\n";
+			}
+			else usersInChat->Text += froms[i];
+		}
+
 	}
 	string GetMessage() {
 		int msgS = 0;
@@ -325,39 +390,79 @@ namespace ClientWinForms {
 	}
 	void receiver() {
 		try {
-			int msg_size;
-			int name_size;
 			int iResult = 0;
 			do {
-				// Получение имени отправителя
-				recv(d1.TheSock, (char*)& name_size, sizeof(int), 0);
-				char* name = new char[name_size + 2];
-				iResult = recv(d1.TheSock, name, name_size, 0);
-				name[name_size] = '\n';
-				name[name_size + 1] = '\0';
-				// Получение сообщения
-				recv(d1.TheSock, (char*)& msg_size, sizeof(int), 0);
-				char* answer = new char[msg_size + 2];
-				iResult = recv(d1.TheSock, answer, msg_size, 0);
-				answer[msg_size] = '\n';
-				answer[msg_size + 1] = '\0';
+				int msgS = 0;
+				recv(d1.TheSock, (char*)& msgS, sizeof(int), 0);				
+				char* msg = new char[msgS + 2];
+				iResult = recv(d1.TheSock, msg, msgS, 0);
+				msg[msgS] = '\n';
+				msg[msgS + 1] = '\0';
+				string msgStr = msg;
 				if (iResult > 0) {
-					std::string Got_Msg = answer;
-					std::string Got_Nm = name;
-					Got_Msg = "from " + Got_Nm + " msg " + Got_Msg;
-					ToChange = gcnew System::String(Got_Msg.c_str());
-
+					Entries++;
+					int position = 0;
+					while (position < msgStr.length() && msgStr[position] != '@') {
+						position++;
+					}
+					int code = stoi(msgStr.substr(0, position));
+					string text = msgStr.substr(position + 1);
+					if (code == -10) {
+						NewChat.code = code;
+						NewChat.text = text;
+					}
+					else if (code == -100) {						
+						if (GetChatsCounter == 0) {
+							GetChatsCounter = stoi(text);
+							tempChats = Chats;
+							Chats.clear();
+							if (GetChatsCounter == 0) GetChatsCounter--;
+						}
+						else {
+							Test.code++;
+							position = 0;
+							while (position < text.length() && text[position] != '@') {
+								position++;
+							}
+							string ChatID = text.substr(0, position++);
+							string TheChatUsers = text.substr(position);
+							Chats[stoi(ChatID)] = tempChats[stoi(ChatID)];
+							GetChatsCl.text += ChatID + '(' + to_string(tempChats[stoi(ChatID)]) + ") " + TheChatUsers + "\r\n";
+							if (GetChatsCounter == 1) GetChatsCounter = -1;
+							else GetChatsCounter--;
+						}
+					}
+					else if (code > 0) {
+						int ChatsSize = Chats.size();
+						if (Chats.count(code) == 0) {
+							//вызвать запрос на получение списка чатов
+						}
+						else {
+							Chats[code] = 0;
+							if (code == chatSend) {
+								oldMessages->Text += "\r\n";
+								position = 0;
+								while (position < text.length() && text[position] != '@') {
+									position++;
+								}								
+								string PersonFrom = text.substr(0, position++);
+								int oldpoz = position;
+								while (position < text.length() && text[position] != '@') {
+									position++;
+								}
+								string DateFrom = text.substr(position, position-oldpoz);
+							}
+						}
+					}
 				}
 				else if (iResult == 0) {
 				}
 				else {
-					//ConStatus->Text = "Error";
 				}
-				delete[] answer;
 			} while (iResult > 0);
 		}
-		catch (...) {
-			//ConStatus->Text = "Server unable";
+		catch (exception e) {
+
 			return;
 		}
 	}
@@ -366,49 +471,78 @@ namespace ClientWinForms {
 			std::string str;
 			// Ввод сообщения и разделение его на ник получателя, сообщение и слова-маркеры
 			str = SystemToStl(newMessage->Text);
-			MsgCl(chatSend, str);
+			MsgCl toSend(chatSend, str);
+			toSend.Send();
 		}
 		catch (...) {
 			return;
 		}
 	}
 	private: System::Void NewChat_Click(System::Object^ sender, System::EventArgs^ e) {
-		if (ChatUsers->Text->Length == 0 || ChatUsers->Text=="Введите пользователей") {
-			ChatUsers->Text = "Введите пользователей";
+		if (ChatUsers->Enabled == false) {
+			ChatUsers->Enabled = true;
+			ChatList->Enabled = false;
+			ChatUsers->Visible = true;
+			ChatList->Visible = false;
 		}
 		else {
-			MsgCl NewChat(-10, SystemToStl(ChatUsers->Text));
-			NewChat.Send();
-			string id = GetMessage();
-			if (id[0] >= '0' && id[0] <= '9') {
-				tabControl1->SelectedIndex = 1;
-				chatSend = stoi(id);
-				usersInChat->Text = ChatUsers->Text;
-				//MsgCl GetStory(-20,id);
-				
+			if (ChatUsers->Text->Length == 0 || ChatUsers->Text == "Введите пользователей") {
+				ChatUsers->Text = "Введите пользователей";
 			}
-			else ChatUsers->Text = gcnew System::String(id.c_str());
+			else {
+				NewChat.code = -10;
+				NewChat.text = SystemToStl(ChatUsers->Text);
+				NewChat.Send();
+				while (NewChat.text == SystemToStl(ChatUsers->Text)) {
+					label1->Text = ChatUsers->Text;
+				}
+				if (NewChat.text[0] >= '0' && NewChat.text[0] <= '9') {
+					tabControl1->SelectedIndex = 1;
+					chatSend = stoi(NewChat.text);
+					CUWithLines(ChatUsers->Text);
+					//usersInChat->Text = ChatUsers->Text;
+					//MsgCl GetStory(-20,id);
+				}
+				else {
+					ChatUsers->Text = gcnew System::String(NewChat.text.c_str());
+
+				}
+			}
+
+			ChatUsers->Text = "";
+			ChatUsers->Enabled = false;
+			ChatList->Enabled = true;
+			ChatUsers->Visible = false;
+			ChatList->Visible = true;
 		}
 	}
-private: System::Void Label1_MouseClick(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e) {
-	label1->Text = "clicked";
-}
+
 private: System::Void TheChatWindow_Load(System::Object^ sender, System::EventArgs^ e) {
 	/*MsgCl getChats(-100, "");
 	MsgCl getUsers(-1000, "");
 	getChats.Send();
 	getUsers.Send();*/
-	/*ThreadStart^ thrStart = gcnew ThreadStart(this, &TheChatWindow::receiver);
+	ThreadStart^ thrStart = gcnew ThreadStart(this, &TheChatWindow::receiver);
 	Thread^ t1 = gcnew Thread(thrStart);
 	t1->IsBackground = true;
-	t1->Start();*/
+	t1->Start();
+	timer1->Start();
 }
 private: System::Void Timer1_Tick(System::Object^ sender, System::EventArgs^ e) {
+	label2->Text = Convert::ToString(GetChatsCounter) +  " " + Convert::ToString(Test.code) + " " + Convert::ToString(Entries);
 	if (CompWith != ToChange) {
 		oldMessages->Text += ToChange + "\r\n";
 		CompWith = ToChange;
 	}
 	
 }
+
+private: System::Void SendMessage_Click(System::Object^ sender, System::EventArgs^ e) {
+	TheSender();
+}
+private: System::Void OldChats_Click(System::Object^ sender, System::EventArgs^ e) {
+	GetChats();
+}
+
 };
 }

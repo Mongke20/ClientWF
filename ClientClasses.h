@@ -3,6 +3,9 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <string>
+#include <set>
+#include <vector>
+#include <map>
 using namespace std;
 //Класс, в который помещаются нужные данные из первой формы для передачи их или во вторую форму или в другой класс.
 class MyFormData {
@@ -45,4 +48,8 @@ public:
 		}
 	}
 };
-
+MsgCl NewChat;
+MsgCl GetChatsCl(-100, " ");
+MsgCl Test(0,"");
+map<int, int> Chats;
+map<int, int> tempChats;
