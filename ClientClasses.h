@@ -51,5 +51,6 @@ public:
 MsgCl NewChat;
 MsgCl GetChatsCl(-100, " ");
 MsgCl Test(0,"");
+vector<string> ChatListVector;
 map<int, int> Chats;
 map<int, int> tempChats;

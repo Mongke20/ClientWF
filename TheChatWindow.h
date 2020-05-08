@@ -66,9 +66,11 @@ namespace ClientWinForms {
 
 	private: System::Windows::Forms::Timer^ timer1;
 	private: System::Windows::Forms::Label^ label1;
-	private: System::Windows::Forms::TextBox^ ChatList;
+
 	private: System::Windows::Forms::TextBox^ UserList;
 	private: System::Windows::Forms::Label^ label2;
+	private: System::Windows::Forms::ListBox^ ChatListBox;
+
 
 	private: System::ComponentModel::IContainer^ components;
 
@@ -111,8 +113,9 @@ namespace ClientWinForms {
 			this->sendMessage = (gcnew System::Windows::Forms::Button());
 			this->tabControl1 = (gcnew System::Windows::Forms::TabControl());
 			this->tabPage1 = (gcnew System::Windows::Forms::TabPage());
+			this->ChatListBox = (gcnew System::Windows::Forms::ListBox());
+			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->UserList = (gcnew System::Windows::Forms::TextBox());
-			this->ChatList = (gcnew System::Windows::Forms::TextBox());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->ChatUsers = (gcnew System::Windows::Forms::TextBox());
 			this->infoTextBox = (gcnew System::Windows::Forms::TextBox());
@@ -121,7 +124,6 @@ namespace ClientWinForms {
 			this->oldChats = (gcnew System::Windows::Forms::Button());
 			this->newChat = (gcnew System::Windows::Forms::Button());
 			this->timer1 = (gcnew System::Windows::Forms::Timer(this->components));
-			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->tabPage2->SuspendLayout();
 			this->tabControl1->SuspendLayout();
 			this->tabPage1->SuspendLayout();
@@ -192,9 +194,9 @@ namespace ClientWinForms {
 			// 
 			// tabPage1
 			// 
+			this->tabPage1->Controls->Add(this->ChatListBox);
 			this->tabPage1->Controls->Add(this->label2);
 			this->tabPage1->Controls->Add(this->UserList);
-			this->tabPage1->Controls->Add(this->ChatList);
 			this->tabPage1->Controls->Add(this->label1);
 			this->tabPage1->Controls->Add(this->ChatUsers);
 			this->tabPage1->Controls->Add(this->infoTextBox);
@@ -210,21 +212,32 @@ namespace ClientWinForms {
 			this->tabPage1->Text = L"Menu";
 			this->tabPage1->UseVisualStyleBackColor = true;
 			// 
+			// ChatListBox
+			// 
+			this->ChatListBox->FormattingEnabled = true;
+			this->ChatListBox->ItemHeight = 16;
+			this->ChatListBox->Location = System::Drawing::Point(160, 6);
+			this->ChatListBox->Name = L"ChatListBox";
+			this->ChatListBox->Size = System::Drawing::Size(544, 228);
+			this->ChatListBox->TabIndex = 10;
+			this->ChatListBox->DoubleClick += gcnew System::EventHandler(this, &TheChatWindow::ChatListBox_DoubleClick);
+			// 
+			// label2
+			// 
+			this->label2->AutoSize = true;
+			this->label2->Location = System::Drawing::Point(581, 195);
+			this->label2->Name = L"label2";
+			this->label2->Size = System::Drawing::Size(46, 17);
+			this->label2->TabIndex = 9;
+			this->label2->Text = L"label2";
+			// 
 			// UserList
 			// 
-			this->UserList->Location = System::Drawing::Point(160, 215);
+			this->UserList->Location = System::Drawing::Point(160, 230);
 			this->UserList->Multiline = true;
 			this->UserList->Name = L"UserList";
-			this->UserList->Size = System::Drawing::Size(544, 179);
+			this->UserList->Size = System::Drawing::Size(544, 164);
 			this->UserList->TabIndex = 8;
-			// 
-			// ChatList
-			// 
-			this->ChatList->Location = System::Drawing::Point(160, 6);
-			this->ChatList->Multiline = true;
-			this->ChatList->Name = L"ChatList";
-			this->ChatList->Size = System::Drawing::Size(544, 191);
-			this->ChatList->TabIndex = 7;
 			// 
 			// label1
 			// 
@@ -239,7 +252,7 @@ namespace ClientWinForms {
 			// 
 			this->ChatUsers->AcceptsTab = true;
 			this->ChatUsers->Enabled = false;
-			this->ChatUsers->Location = System::Drawing::Point(299, 80);
+			this->ChatUsers->Location = System::Drawing::Point(298, 85);
 			this->ChatUsers->Multiline = true;
 			this->ChatUsers->Name = L"ChatUsers";
 			this->ChatUsers->Size = System::Drawing::Size(262, 139);
@@ -297,15 +310,6 @@ namespace ClientWinForms {
 			// 
 			this->timer1->Tick += gcnew System::EventHandler(this, &TheChatWindow::Timer1_Tick);
 			// 
-			// label2
-			// 
-			this->label2->AutoSize = true;
-			this->label2->Location = System::Drawing::Point(581, 195);
-			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(46, 17);
-			this->label2->TabIndex = 9;
-			this->label2->Text = L"label2";
-			// 
 			// TheChatWindow
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
@@ -346,28 +350,35 @@ namespace ClientWinForms {
 	
 	String^ ToChange;
 	String^ CompWith;
+	//Айди открытого чата
 	int chatSend;
+	//Вспомогательная переменная для получения чатов
 	int GetChatsCounter = 0;
+	//Переменная отладки
 	int Entries = 0;
+	//Функция преобразования системной строки в обычную
 	string SystemToStl(String^ s) {
 		using namespace Runtime::InteropServices;
 		const char* ptr = (const char*)(Marshal::StringToHGlobalAnsi(s)).ToPointer();
 		return string(ptr);
 	}
-
+	//Функция получения чатов
 	void GetChats() {
-		ChatList->Text = " ";
+		ChatListBox->Items->Clear();
 		GetChatsCl.code = -100;
 		GetChatsCl.text = " ";
 		GetChatsCl.Send();
 		while (GetChatsCounter!=-1) {
 			label2->Text = "Что-то есть " + Convert::ToString(GetChatsCounter);
-		};
-		ChatList->Text = gcnew System::String(GetChatsCl.text.c_str());
+		};		
+		for (auto i : ChatListVector) {
+			ChatListBox->Items->Add(gcnew System::String(i.c_str()));
+		}
+		ChatListVector.clear();
 		GetChatsCounter = 0;
 		GetChatsCl.text = " ";
 	}
-
+	//Переносит список пользователей(которых ввели) из 1 вкладки во вкладку с чатом.
 	void CUWithLines(String^ froms) {
 		usersInChat->Text = "";
 		for (int i = 0; i < froms->Length; i++) {
@@ -378,6 +389,8 @@ namespace ClientWinForms {
 		}
 
 	}
+	//Функция для сокращения получения сообщения. В многопоточной функции побоялся использовать на момент наличия там ошибок, не был уверен
+	// Что ошибка не в этой функции
 	string GetMessage() {
 		int msgS = 0;
 		recv(d1.TheSock, (char*)& msgS, sizeof(int), 0);
@@ -388,6 +401,7 @@ namespace ClientWinForms {
 		string msgStr = msg;
 		return msgStr;
 	}
+	//Получатель. Ни в ком случае НЕ ИСПОЛЬЗОВАТЬ элементы формы!!!
 	void receiver() {
 		try {
 			int iResult = 0;
@@ -407,10 +421,12 @@ namespace ClientWinForms {
 					}
 					int code = stoi(msgStr.substr(0, position));
 					string text = msgStr.substr(position + 1);
+					//Когда получаем ответ по созданию нового чата
 					if (code == -10) {
 						NewChat.code = code;
 						NewChat.text = text;
 					}
+					//Получение списка доступных чатов
 					else if (code == -100) {						
 						if (GetChatsCounter == 0) {
 							GetChatsCounter = stoi(text);
@@ -427,11 +443,14 @@ namespace ClientWinForms {
 							string ChatID = text.substr(0, position++);
 							string TheChatUsers = text.substr(position);
 							Chats[stoi(ChatID)] = tempChats[stoi(ChatID)];
-							GetChatsCl.text += ChatID + '(' + to_string(tempChats[stoi(ChatID)]) + ") " + TheChatUsers + "\r\n";
+							string newChat = ChatID + '(' + to_string(tempChats[stoi(ChatID)]) + ") " + TheChatUsers + "\r\n";
+							GetChatsCl.text += newChat;
+							ChatListVector.push_back(newChat);
 							if (GetChatsCounter == 1) GetChatsCounter = -1;
 							else GetChatsCounter--;
 						}
 					}
+					//Получение обычных сообщений в какой-либо чат. НАДО ДОДЕЛАТЬ
 					else if (code > 0) {
 						int ChatsSize = Chats.size();
 						if (Chats.count(code) == 0) {
@@ -466,6 +485,7 @@ namespace ClientWinForms {
 			return;
 		}
 	}
+	//функция отправки сообщения
 	void TheSender() {
 		try {
 			std::string str;
@@ -478,13 +498,16 @@ namespace ClientWinForms {
 			return;
 		}
 	}
+	// При клике (ЕЩЕ ДОДЕЛЫВАТЬ НАДО) на кнопку новый чат
 	private: System::Void NewChat_Click(System::Object^ sender, System::EventArgs^ e) {
+		//Скрывает список чатов, появляется поле для ввода пользователей
 		if (ChatUsers->Enabled == false) {
 			ChatUsers->Enabled = true;
-			ChatList->Enabled = false;
+			ChatListBox->Enabled = false;
 			ChatUsers->Visible = true;
-			ChatList->Visible = false;
+			ChatListBox->Visible = false;
 		}
+		//Если уже показа форма, обработка событий
 		else {
 			if (ChatUsers->Text->Length == 0 || ChatUsers->Text == "Введите пользователей") {
 				ChatUsers->Text = "Введите пользователей";
@@ -508,26 +531,31 @@ namespace ClientWinForms {
 
 				}
 			}
-
+			//Возвращение к состоянию до нажатия кнопки
 			ChatUsers->Text = "";
 			ChatUsers->Enabled = false;
-			ChatList->Enabled = true;
+			ChatListBox->Enabled = true;
 			ChatUsers->Visible = false;
-			ChatList->Visible = true;
+			ChatListBox->Visible = true;
 		}
 	}
 
+//События при загрузке формы
 private: System::Void TheChatWindow_Load(System::Object^ sender, System::EventArgs^ e) {
 	/*MsgCl getChats(-100, "");
 	MsgCl getUsers(-1000, "");
 	getChats.Send();
 	getUsers.Send();*/
+	//Начало потока, где идет постоянный прием.
 	ThreadStart^ thrStart = gcnew ThreadStart(this, &TheChatWindow::receiver);
 	Thread^ t1 = gcnew Thread(thrStart);
 	t1->IsBackground = true;
 	t1->Start();
+	//Запуск таймера
 	timer1->Start();
 }
+
+//Таймер. Пока бесполезный, использовался для отладки. Скорее всего, нужен для отображения сообщений в текущем чате.(так было раньше)
 private: System::Void Timer1_Tick(System::Object^ sender, System::EventArgs^ e) {
 	label2->Text = Convert::ToString(GetChatsCounter) +  " " + Convert::ToString(Test.code) + " " + Convert::ToString(Entries);
 	if (CompWith != ToChange) {
@@ -537,12 +565,23 @@ private: System::Void Timer1_Tick(System::Object^ sender, System::EventArgs^ e) 
 	
 }
 
+//При нажатии на кнопку отправить сообщение во 2 вкладке
 private: System::Void SendMessage_Click(System::Object^ sender, System::EventArgs^ e) {
 	TheSender();
 }
+
+//При нажатии на кнопку список чатов
 private: System::Void OldChats_Click(System::Object^ sender, System::EventArgs^ e) {
 	GetChats();
 }
 
+
+//При двойном клике на чат
+	private: System::Void ChatListBox_DoubleClick(System::Object^ sender, System::EventArgs^ e) {
+		if (ChatListBox->SelectedIndex >= 0) {
+		tabControl1->SelectedIndex = 1;
+		oldMessages->Text = ChatListBox->SelectedItem->ToString();
+	}
+}
 };
 }

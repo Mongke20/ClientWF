@@ -167,7 +167,7 @@ namespace ClientWinForms {
 			this->PasswordField->Name = L"PasswordField";
 			this->PasswordField->PasswordChar = '*';
 			this->PasswordField->Size = System::Drawing::Size(100, 22);
-			this->PasswordField->TabIndex = 14;
+			this->PasswordField->TabIndex = 1;
 			// 
 			// MyForm
 			// 
