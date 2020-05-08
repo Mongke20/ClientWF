@@ -354,6 +354,8 @@ namespace ClientWinForms {
 	int chatSend;
 	//Вспомогательная переменная для получения чатов
 	int GetChatsCounter = 0;
+	//Вспомогательная переменная для получения сообщений
+	int GetMessagesCounter = 0;
 	//Переменная отладки
 	int Entries = 0;
 	//Функция преобразования системной строки в обычную
@@ -378,6 +380,30 @@ namespace ClientWinForms {
 		GetChatsCounter = 0;
 		GetChatsCl.text = " ";
 	}
+
+	//Функция получения чатов
+	void GetMessages(string chatID) {
+		oldMessages->Text = "";
+		GetMessagesCl.code = -20;
+		GetMessagesCl.text = chatID;
+		GetMessagesCl.Send();
+		while (GetMessagesCounter != -1) {
+			label2->Text = "Что-то есть " + Convert::ToString(GetMessagesCounter);
+		};
+		//Надо улучшить вывод даты! Чтобы она писалась только тогда, когда она не сегодня.
+		for (auto msg : OldMessageVector) {
+			oldMessages->Text += "\r\n";
+			oldMessages->Text += gcnew System::String(msg[0].c_str());
+			oldMessages->Text += ":\t";
+			oldMessages->Text += gcnew System::String(msg[1].c_str());
+			oldMessages->Text += ":\t";
+			oldMessages->Text += gcnew System::String(msg[2].c_str());
+		}
+		OldMessageVector.clear();
+		GetMessagesCounter = 0;
+		GetMessagesCl.text = " ";
+	}
+
 	//Переносит список пользователей(которых ввели) из 1 вкладки во вкладку с чатом.
 	void CUWithLines(String^ froms) {
 		usersInChat->Text = "";
@@ -448,6 +474,44 @@ namespace ClientWinForms {
 							ChatListVector.push_back(newChat);
 							if (GetChatsCounter == 1) GetChatsCounter = -1;
 							else GetChatsCounter--;
+						}
+					}
+					//Получение кучи сообщений в только что открытый чат
+					else if (code == -20) {
+						if (GetMessagesCounter == 0) {
+							GetMessagesCounter = stoi(text);
+							if (GetMessagesCounter == 0) GetMessagesCounter--;
+						}
+						else {
+							vector<string> oneMessage;
+							//Первая часть (до @) - это код чата. Он нам не особо нужен
+							position = 0;
+							while (position < text.length() && text[position] != '@') {
+								position++;
+							}
+							position++;
+							int oldpoz = position;
+							//Вторая часть - это отправитель
+							while (position < text.length() && text[position] != '@') {
+								position++;
+							}
+							string PersonFrom = text.substr(oldpoz, position - oldpoz);
+							oneMessage.push_back(PersonFrom);
+							position++;
+							oldpoz = position;
+							//Третья часть - это дата
+							while (position < text.length() && text[position] != '@') {
+								position++;
+							}
+							string DateFrom = text.substr(oldpoz, position - oldpoz);
+							oneMessage.push_back(DateFrom);
+							position++;
+							//Четвертая часть - это время вместе с самим сообщением
+							string timeMessage = text.substr(position);
+							oneMessage.push_back(timeMessage);
+							OldMessageVector.push_back(oneMessage);
+							if (GetMessagesCounter == 1) GetMessagesCounter = -1;
+							else GetMessagesCounter--;
 						}
 					}
 					//Получение обычных сообщений в какой-либо чат. НАДО ДОДЕЛАТЬ
@@ -579,9 +643,25 @@ private: System::Void OldChats_Click(System::Object^ sender, System::EventArgs^ 
 //При двойном клике на чат
 	private: System::Void ChatListBox_DoubleClick(System::Object^ sender, System::EventArgs^ e) {
 		if (ChatListBox->SelectedIndex >= 0) {
-		tabControl1->SelectedIndex = 1;
-		oldMessages->Text = ChatListBox->SelectedItem->ToString();
-	}
+			//Переключение на вторую вкладку
+			tabControl1->SelectedIndex = 1;
+			//Разбиение строки на код чата и список пользователей
+			string chatString = SystemToStl(ChatListBox->SelectedItem->ToString());
+			int position = 0;
+			while (chatString[position] != '(') {
+				position++;
+			}
+			string ChatID = chatString.substr(0, position);
+			while (chatString[position] != ')') {
+				position++;
+			}
+			string TheChatUsers = chatString.substr(position + 1);
+			//Перенос списка пользователей во вкладку с чатом
+			CUWithLines(gcnew System::String(TheChatUsers.c_str()));
+			oldMessages->Text = ChatListBox->SelectedItem->ToString();
+			//Отправить запрос на получение сообщений для этого чата
+			GetMessages(ChatID);
+		}
 }
 };
 }

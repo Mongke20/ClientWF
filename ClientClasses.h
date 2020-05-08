@@ -50,7 +50,9 @@ public:
 };
 MsgCl NewChat;
 MsgCl GetChatsCl(-100, " ");
+MsgCl GetMessagesCl(-20, " ");
 MsgCl Test(0,"");
 vector<string> ChatListVector;
+vector<vector<string>> OldMessageVector;
 map<int, int> Chats;
 map<int, int> tempChats;
