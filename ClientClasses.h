@@ -48,11 +48,14 @@ public:
 		}
 	}
 };
+MsgCl toSend;
 MsgCl NewChat;
 MsgCl GetChatsCl(-100, " ");
 MsgCl GetMessagesCl(-20, " ");
+MsgCl getCl;
 MsgCl Test(0,"");
 vector<string> ChatListVector;
 vector<vector<string>> OldMessageVector;
 map<int, int> Chats;
 map<int, int> tempChats;
+vector<string> oneMessage;

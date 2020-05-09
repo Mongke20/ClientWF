@@ -1,7 +1,7 @@
 #pragma once
 #define WIN32_LEAN_AND_MEAN
 #include "ClientClasses.h"
-//#include "MyForm.h"
+#include "MyForm.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <sstream>
@@ -70,6 +70,7 @@ namespace ClientWinForms {
 	private: System::Windows::Forms::TextBox^ UserList;
 	private: System::Windows::Forms::Label^ label2;
 	private: System::Windows::Forms::ListBox^ ChatListBox;
+	private: System::Windows::Forms::Button^ exitButton;
 
 
 	private: System::ComponentModel::IContainer^ components;
@@ -124,6 +125,7 @@ namespace ClientWinForms {
 			this->oldChats = (gcnew System::Windows::Forms::Button());
 			this->newChat = (gcnew System::Windows::Forms::Button());
 			this->timer1 = (gcnew System::Windows::Forms::Timer(this->components));
+			this->exitButton = (gcnew System::Windows::Forms::Button());
 			this->tabPage2->SuspendLayout();
 			this->tabControl1->SuspendLayout();
 			this->tabPage1->SuspendLayout();
@@ -131,6 +133,7 @@ namespace ClientWinForms {
 			// 
 			// tabPage2
 			// 
+			this->tabPage2->Controls->Add(this->exitButton);
 			this->tabPage2->Controls->Add(this->usersInChat);
 			this->tabPage2->Controls->Add(this->oldMessages);
 			this->tabPage2->Controls->Add(this->newMessage);
@@ -173,12 +176,13 @@ namespace ClientWinForms {
 			// 
 			// sendMessage
 			// 
+			this->sendMessage->BackColor = System::Drawing::Color::LightGreen;
 			this->sendMessage->Location = System::Drawing::Point(596, 327);
 			this->sendMessage->Name = L"sendMessage";
 			this->sendMessage->Size = System::Drawing::Size(106, 65);
 			this->sendMessage->TabIndex = 2;
 			this->sendMessage->Text = L"Отправить";
-			this->sendMessage->UseVisualStyleBackColor = true;
+			this->sendMessage->UseVisualStyleBackColor = false;
 			this->sendMessage->Click += gcnew System::EventHandler(this, &TheChatWindow::SendMessage_Click);
 			// 
 			// tabControl1
@@ -276,6 +280,7 @@ namespace ClientWinForms {
 			this->exit->TabIndex = 3;
 			this->exit->Text = L"Выход";
 			this->exit->UseVisualStyleBackColor = true;
+			this->exit->Click += gcnew System::EventHandler(this, &TheChatWindow::Exit_Click);
 			// 
 			// usersOnline
 			// 
@@ -310,6 +315,17 @@ namespace ClientWinForms {
 			// 
 			this->timer1->Tick += gcnew System::EventHandler(this, &TheChatWindow::Timer1_Tick);
 			// 
+			// exitButton
+			// 
+			this->exitButton->BackColor = System::Drawing::Color::Salmon;
+			this->exitButton->Location = System::Drawing::Point(596, 264);
+			this->exitButton->Name = L"exitButton";
+			this->exitButton->Size = System::Drawing::Size(105, 50);
+			this->exitButton->TabIndex = 4;
+			this->exitButton->Text = L"Выйти из чата";
+			this->exitButton->UseVisualStyleBackColor = false;
+			this->exitButton->Click += gcnew System::EventHandler(this, &TheChatWindow::ExitButton_Click);
+			// 
 			// TheChatWindow
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
@@ -318,6 +334,7 @@ namespace ClientWinForms {
 			this->Controls->Add(this->tabControl1);
 			this->Name = L"TheChatWindow";
 			this->Text = L"TheChatWindow";
+			this->FormClosing += gcnew System::Windows::Forms::FormClosingEventHandler(this, &TheChatWindow::TheChatWindow_FormClosing);
 			this->Load += gcnew System::EventHandler(this, &TheChatWindow::TheChatWindow_Load);
 			this->tabPage2->ResumeLayout(false);
 			this->tabPage2->PerformLayout();
@@ -333,8 +350,8 @@ namespace ClientWinForms {
 		//														//
 		// Код = -10 : создать новый чат						//
 		// Код = -20 : Получить последние 10 сообщений в чате	//
-		//														//
-		//														//
+		// Код = -30 : выход из чата							//
+		// Код = -40 : Выход из приложения						//
 		// Код = -100: Отобразить список чатов					//
 		//														//
 		//														//
@@ -351,11 +368,12 @@ namespace ClientWinForms {
 	String^ ToChange;
 	String^ CompWith;
 	//Айди открытого чата
-	int chatSend;
+	int chatID = 0;
 	//Вспомогательная переменная для получения чатов
 	int GetChatsCounter = 0;
 	//Вспомогательная переменная для получения сообщений
 	int GetMessagesCounter = 0;
+	int getCounter = 0;
 	//Переменная отладки
 	int Entries = 0;
 	//Функция преобразования системной строки в обычную
@@ -367,41 +385,44 @@ namespace ClientWinForms {
 	//Функция получения чатов
 	void GetChats() {
 		ChatListBox->Items->Clear();
-		GetChatsCl.code = -100;
-		GetChatsCl.text = " ";
-		GetChatsCl.Send();
-		while (GetChatsCounter!=-1) {
-			label2->Text = "Что-то есть " + Convert::ToString(GetChatsCounter);
+		getCl.code = -100;
+		getCl.text = " ";
+		getCl.Send();
+		while (getCounter !=-1) {
+			label2->Text = "Что-то есть " + Convert::ToString(getCounter);
 		};		
 		for (auto i : ChatListVector) {
 			ChatListBox->Items->Add(gcnew System::String(i.c_str()));
 		}
 		ChatListVector.clear();
-		GetChatsCounter = 0;
-		GetChatsCl.text = " ";
+		getCounter = 0;
+		getCl.text = " ";
 	}
-
-	//Функция получения чатов
-	void GetMessages(string chatID) {
+	String^ formatStr(vector<string> v) {
+		String^ result;
+		result += gcnew System::String(v[0].c_str());
+		result += ":\t";
+		result += gcnew System::String(v[1].c_str());
+		result += ":\t";
+		result += gcnew System::String(v[2].c_str());
+		result += "\r\n";
+		return result;
+	}
+	void GetMessages(string ChatIDStr) {
 		oldMessages->Text = "";
-		GetMessagesCl.code = -20;
-		GetMessagesCl.text = chatID;
-		GetMessagesCl.Send();
-		while (GetMessagesCounter != -1) {
-			label2->Text = "Что-то есть " + Convert::ToString(GetMessagesCounter);
+		getCl.code = -20;
+		getCl.text = ChatIDStr;
+		getCl.Send();
+		while (getCounter != -1) {
+			label2->Text = "Что-то есть " + Convert::ToString(getCounter);
 		};
 		//Надо улучшить вывод даты! Чтобы она писалась только тогда, когда она не сегодня.
-		for (auto msg : OldMessageVector) {
-			oldMessages->Text += "\r\n";
-			oldMessages->Text += gcnew System::String(msg[0].c_str());
-			oldMessages->Text += ":\t";
-			oldMessages->Text += gcnew System::String(msg[1].c_str());
-			oldMessages->Text += ":\t";
-			oldMessages->Text += gcnew System::String(msg[2].c_str());
+		for (auto msg : OldMessageVector) {			
+			oldMessages->Text += formatStr(msg);
 		}
 		OldMessageVector.clear();
-		GetMessagesCounter = 0;
-		GetMessagesCl.text = " ";
+		getCounter = 0;
+		getCl.text = " ";
 	}
 
 	//Переносит список пользователей(которых ввели) из 1 вкладки во вкладку с чатом.
@@ -417,15 +438,34 @@ namespace ClientWinForms {
 	}
 	//Функция для сокращения получения сообщения. В многопоточной функции побоялся использовать на момент наличия там ошибок, не был уверен
 	// Что ошибка не в этой функции
-	string GetMessage() {
-		int msgS = 0;
-		recv(d1.TheSock, (char*)& msgS, sizeof(int), 0);
-		char* msg = new char[msgS + 2];
-		int iResult = recv(d1.TheSock, msg, msgS, 0);
-		msg[msgS] = '\n';
-		msg[msgS + 1] = '\0';
-		string msgStr = msg;
-		return msgStr;
+	vector<string> GetMessage(string text) {
+		vector<string> result;
+		//Первая часть (до @) - это код чата. Он нам не особо нужен
+		int position = 0;
+		while (position < text.length() && text[position] != '@') {
+			position++;
+		}
+		position++;
+		int oldpoz = position;
+		//Вторая часть - это отправитель
+		while (position < text.length() && text[position] != '@') {
+			position++;
+		}
+		string PersonFrom = text.substr(oldpoz, position - oldpoz);
+		result.push_back(PersonFrom);
+		position++;
+		oldpoz = position;
+		//Третья часть - это дата
+		while (position < text.length() && text[position] != '@') {
+			position++;
+		}
+		string DateFrom = text.substr(oldpoz, position - oldpoz);
+		result.push_back(DateFrom);
+		position++;
+		//Четвертая часть - это время вместе с самим сообщением
+		string timeMessage = text.substr(position);
+		result.push_back(timeMessage);
+		return result;
 	}
 	//Получатель. Ни в ком случае НЕ ИСПОЛЬЗОВАТЬ элементы формы!!!
 	void receiver() {
@@ -454,11 +494,11 @@ namespace ClientWinForms {
 					}
 					//Получение списка доступных чатов
 					else if (code == -100) {						
-						if (GetChatsCounter == 0) {
-							GetChatsCounter = stoi(text);
+						if (getCounter == 0) {
+							getCounter = stoi(text);
 							tempChats = Chats;
 							Chats.clear();
-							if (GetChatsCounter == 0) GetChatsCounter--;
+							if (getCounter == 0) getCounter--;
 						}
 						else {
 							Test.code++;
@@ -466,76 +506,44 @@ namespace ClientWinForms {
 							while (position < text.length() && text[position] != '@') {
 								position++;
 							}
-							string ChatID = text.substr(0, position++);
+							string ChatIDStr = text.substr(0, position++);
 							string TheChatUsers = text.substr(position);
-							Chats[stoi(ChatID)] = tempChats[stoi(ChatID)];
-							string newChat = ChatID + '(' + to_string(tempChats[stoi(ChatID)]) + ") " + TheChatUsers + "\r\n";
-							GetChatsCl.text += newChat;
+							Chats[stoi(ChatIDStr)] = tempChats[stoi(ChatIDStr)];
+							string newChat = ChatIDStr + '(' + to_string(tempChats[stoi(ChatIDStr)]) + ") " + TheChatUsers + "\r\n";
+							getCl.text += newChat;
 							ChatListVector.push_back(newChat);
-							if (GetChatsCounter == 1) GetChatsCounter = -1;
-							else GetChatsCounter--;
+							if (getCounter == 1) getCounter = -1;
+							else getCounter--;
 						}
 					}
 					//Получение кучи сообщений в только что открытый чат
 					else if (code == -20) {
-						if (GetMessagesCounter == 0) {
-							GetMessagesCounter = stoi(text);
-							if (GetMessagesCounter == 0) GetMessagesCounter--;
+						if (getCounter == 0) {
+							getCounter = stoi(text);
+							if (getCounter == 0) getCounter--;
 						}
-						else {
-							vector<string> oneMessage;
-							//Первая часть (до @) - это код чата. Он нам не особо нужен
-							position = 0;
-							while (position < text.length() && text[position] != '@') {
-								position++;
-							}
-							position++;
-							int oldpoz = position;
-							//Вторая часть - это отправитель
-							while (position < text.length() && text[position] != '@') {
-								position++;
-							}
-							string PersonFrom = text.substr(oldpoz, position - oldpoz);
-							oneMessage.push_back(PersonFrom);
-							position++;
-							oldpoz = position;
-							//Третья часть - это дата
-							while (position < text.length() && text[position] != '@') {
-								position++;
-							}
-							string DateFrom = text.substr(oldpoz, position - oldpoz);
-							oneMessage.push_back(DateFrom);
-							position++;
-							//Четвертая часть - это время вместе с самим сообщением
-							string timeMessage = text.substr(position);
-							oneMessage.push_back(timeMessage);
-							OldMessageVector.push_back(oneMessage);
-							if (GetMessagesCounter == 1) GetMessagesCounter = -1;
-							else GetMessagesCounter--;
+						else {							
+							OldMessageVector.push_back(GetMessage(text));
+							if (getCounter == 1) getCounter = -1;
+							else getCounter--;
 						}
 					}
 					//Получение обычных сообщений в какой-либо чат. НАДО ДОДЕЛАТЬ
 					else if (code > 0) {
 						int ChatsSize = Chats.size();
-						if (Chats.count(code) == 0) {
-							//вызвать запрос на получение списка чатов
+						/*if (Chats.count(code) == 0) {
+							GetChats();
 						}
-						else {
-							Chats[code] = 0;
-							if (code == chatSend) {
-								oldMessages->Text += "\r\n";
-								position = 0;
-								while (position < text.length() && text[position] != '@') {
-									position++;
-								}								
-								string PersonFrom = text.substr(0, position++);
-								int oldpoz = position;
-								while (position < text.length() && text[position] != '@') {
-									position++;
-								}
-								string DateFrom = text.substr(position, position-oldpoz);
+						else {*/
+							Chats[code]++;
+							if (code == chatID) {
+								Chats[code] = 0;
+								// в конец oldMessages->Text += "\r\n";
+								oneMessage = GetMessage(text);
+								ToChange = gcnew System::String(text.c_str());
 							}
-						}
+							GetChats();
+						//}
 					}
 				}
 				else if (iResult == 0) {
@@ -549,13 +557,15 @@ namespace ClientWinForms {
 			return;
 		}
 	}
+	
 	//функция отправки сообщения
 	void TheSender() {
 		try {
 			std::string str;
 			// Ввод сообщения и разделение его на ник получателя, сообщение и слова-маркеры
 			str = SystemToStl(newMessage->Text);
-			MsgCl toSend(chatSend, str);
+			toSend.code = chatID;
+			toSend.text = str;
 			toSend.Send();
 		}
 		catch (...) {
@@ -585,8 +595,9 @@ namespace ClientWinForms {
 				}
 				if (NewChat.text[0] >= '0' && NewChat.text[0] <= '9') {
 					tabControl1->SelectedIndex = 1;
-					chatSend = stoi(NewChat.text);
+					chatID = stoi(NewChat.text);
 					CUWithLines(ChatUsers->Text);
+					oldMessages->Text = "";
 					//usersInChat->Text = ChatUsers->Text;
 					//MsgCl GetStory(-20,id);
 				}
@@ -623,7 +634,7 @@ private: System::Void TheChatWindow_Load(System::Object^ sender, System::EventAr
 private: System::Void Timer1_Tick(System::Object^ sender, System::EventArgs^ e) {
 	label2->Text = Convert::ToString(GetChatsCounter) +  " " + Convert::ToString(Test.code) + " " + Convert::ToString(Entries);
 	if (CompWith != ToChange) {
-		oldMessages->Text += ToChange + "\r\n";
+		oldMessages->Text += formatStr(oneMessage);
 		CompWith = ToChange;
 	}
 	
@@ -651,17 +662,37 @@ private: System::Void OldChats_Click(System::Object^ sender, System::EventArgs^ 
 			while (chatString[position] != '(') {
 				position++;
 			}
-			string ChatID = chatString.substr(0, position);
+			chatID = stoi(chatString.substr(0, position));
 			while (chatString[position] != ')') {
 				position++;
 			}
 			string TheChatUsers = chatString.substr(position + 1);
 			//Перенос списка пользователей во вкладку с чатом
 			CUWithLines(gcnew System::String(TheChatUsers.c_str()));
-			oldMessages->Text = ChatListBox->SelectedItem->ToString();
 			//Отправить запрос на получение сообщений для этого чата
-			GetMessages(ChatID);
+			GetMessages(to_string(chatID));
 		}
+}
+private: System::Void Exit_Click(System::Object^ sender, System::EventArgs^ e) {
+	closesocket(d1.TheSock);
+	WSACleanup();
+	MsgCl toExit(-40, " ");
+	toExit.Send();	
+	this->Close();
+}
+private: System::Void TheChatWindow_FormClosing(System::Object^ sender, System::Windows::Forms::FormClosingEventArgs^ e) {
+	closesocket(d1.TheSock);
+	WSACleanup();
+	MsgCl toExit(-40, " ");
+	toExit.Send();
+}
+private: System::Void ExitButton_Click(System::Object^ sender, System::EventArgs^ e) {
+	tabControl1->SelectedIndex = 0;
+	MsgCl toExitChat(-30,to_string(chatID));
+	toExitChat.Send();
+	oldMessages->Text = "";
+	newMessage->Text = "";
+	GetChats();
 }
 };
 }

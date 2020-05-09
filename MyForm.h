@@ -346,7 +346,6 @@ namespace ClientWinForms {
 			d1.TheSock = ConnectSocket;
 			TheChatWindow^ dlg1 = gcnew TheChatWindow();
 			dlg1->ShowDialog();
-
 			
 			/*ThreadStart^ thrStart = gcnew ThreadStart(this, &MyForm::receiver);
 			Thread^ t1 = gcnew Thread(thrStart);
@@ -356,8 +355,7 @@ namespace ClientWinForms {
 			
 		}
 		
-	private: System::Void ToConnect_Click(System::Object^ sender, System::EventArgs^ e) {
-		
+	private: System::Void ToConnect_Click(System::Object^ sender, System::EventArgs^ e) {		
 		Chat();
 		ToConnect->Enabled = false;
 		NickField->Enabled = false;
