@@ -6,6 +6,7 @@
 #include <set>
 #include <vector>
 #include <map>
+#include <ctime>
 using namespace std;
 //Класс, в который помещаются нужные данные из первой формы для передачи их или во вторую форму или в другой класс.
 class MyFormData {
@@ -48,6 +49,8 @@ public:
 		}
 	}
 };
+time_t seconds = time(NULL);
+tm* timeinfo = localtime(&seconds);
 MsgCl toSend;
 MsgCl NewChat;
 MsgCl GetChatsCl(-100, " ");

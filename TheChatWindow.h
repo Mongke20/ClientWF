@@ -399,7 +399,9 @@ namespace ClientWinForms {
 	string SystemToStl(String^ s) {
 		using namespace Runtime::InteropServices;
 		const char* ptr = (const char*)(Marshal::StringToHGlobalAnsi(s)).ToPointer();
-		return string(ptr);
+		string str = string(ptr);
+		Marshal::FreeHGlobal(IntPtr((void*)ptr));
+		return str;
 	}
 	//Функция получения чатов
 	void GetChats() {
@@ -424,6 +426,15 @@ namespace ClientWinForms {
 		getCl.Send();
 		
 	}
+	void ShowTime() {
+		seconds = time(NULL);
+		timeinfo = localtime(&seconds);
+		char st[50];
+		char* format = "%A, %B %d, %Y %I:%M:%S";
+		strftime(st, 80, format, timeinfo);
+		string str = st;
+		newMessage->Text += gcnew System::String(str.c_str()) + "\r\n";
+	}
 	String^ formatStr(vector<string> v) {
 		String^ result;
 		result += gcnew System::String(v[0].c_str());
@@ -435,10 +446,10 @@ namespace ClientWinForms {
 		return result;
 	}
 	void GetMessages(string ChatIDStr) {
-		oldMessages->Text = "";
+		oldMessages->Text = " ";
 		getCl.code = -20;
 		getCl.text = ChatIDStr;
-		getCl.Send();
+		getCl.Send();		
 		while (getCounter != -1) {
 			label2->Text = "Что-то есть " + Convert::ToString(getCounter);
 		};
@@ -448,19 +459,19 @@ namespace ClientWinForms {
 		}
 		OldMessageVector.clear();
 		getCounter = 0;
-		getCl.text = " ";
+		getCl.text = " ";	
 	}
 
 	//Переносит список пользователей(которых ввели) из 1 вкладки во вкладку с чатом.
 	void CUWithLines(String^ froms) {
 		usersInChat->Text = "";
-		for (int i = 0; i < froms->Length; i++) {
+		newMessage->Text += Convert::ToString(froms->Length);
+		for (int i = 0; i < froms->Length-3; i++) {
 			if (froms[i] == ',') {
 				usersInChat->Text += "\r\n";
 			}
 			else usersInChat->Text += froms[i];
 		}
-
 	}
 	//Функция для сокращения получения сообщения. В многопоточной функции побоялся использовать на момент наличия там ошибок, не был уверен
 	// Что ошибка не в этой функции
@@ -514,6 +525,7 @@ namespace ClientWinForms {
 				msg[msgS] = '\n';
 				msg[msgS + 1] = '\0';
 				string msgStr = msg;
+				delete[]msg;
 				if (iResult > 0) {
 					int position = 0;
 					while (position < msgStr.length() && msgStr[position] != '@') {
@@ -584,6 +596,7 @@ namespace ClientWinForms {
 				}
 				else {
 				}
+
 			} while (iResult > 0);
 		}
 		catch (exception e) {
@@ -664,9 +677,9 @@ private: System::Void TheChatWindow_Load(System::Object^ sender, System::EventAr
 	timer2->Interval = 1000;
 }
 
-//Таймер. Пока бесполезный, использовался для отладки. Скорее всего, нужен для отображения сообщений в текущем чате.(так было раньше)
+//Таймер использовался для отладки. Скорее всего, нужен для отображения сообщений в текущем чате.(так было раньше)
 private: System::Void Timer1_Tick(System::Object^ sender, System::EventArgs^ e) {
-	label3->Text = Convert::ToString(chatID);
+	//label3->Text = Convert::ToString(chatID);
 	label2->Text =  "Test.code = " + Convert::ToString(Test.code) + " Test.text = " + gcnew System::String(Test.text.c_str())
 		+ " CurID = "  + CurID;
 	if (CompWith != ToChange) {		
@@ -693,6 +706,7 @@ private: System::Void OldChats_Click(System::Object^ sender, System::EventArgs^ 
 
 //При двойном клике на чат
 	private: System::Void ChatListBox_DoubleClick(System::Object^ sender, System::EventArgs^ e) {
+		newMessage->Text = "";
 		if (ChatListBox->SelectedIndex >= 0) {
 			//Переключение на вторую вкладку
 			tabControl1->SelectedIndex = 1;
