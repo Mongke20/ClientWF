@@ -194,9 +194,6 @@ namespace ClientWinForms {
 			const char* ptr = (const char*)(Marshal::StringToHGlobalAnsi(s)).ToPointer();
 			return string(ptr);
 		}
-		//Cтроки для обновления текстбокса с полученными сообщениями
-		String^ ToChange;
-		String^ CompWith;
 		//Используемый сокет
 		SOCKET ConnectSocket = INVALID_SOCKET;
 		int iResult;
@@ -231,7 +228,7 @@ namespace ClientWinForms {
 			return StatusStr;
 		}
 		
-		void receiver() {	
+		/*void receiver() {	
 			try {
 				int msg_size;
 				int name_size;
@@ -266,7 +263,7 @@ namespace ClientWinForms {
 				ConStatus->Text = "Server unable" ;
 				return;
 			}
-		}
+		}*/
 		
 		void Chat() {
 			SetConsoleCP(1251); // Ввод с консоли в кодировке 1251
@@ -332,17 +329,7 @@ namespace ClientWinForms {
 				StatusStr = CheckStatus(ConnectSocket);
 			}
 			ConStatus->Text = "Подключен";
-			/*int msg_size;
-			iResult = recv(ConnectSocket, (char*)& msg_size, sizeof(int), 0);
-			char* welcome = new char[msg_size + 1];
-			iResult = recv(ConnectSocket, welcome, msg_size, 0);
-			welcome[msg_size] = '\0';
-			string WeclomeMsg = welcome;
-			if (iResult > 0) {
-				ConStatus->Text = "Подключен";
-			}
-			else ConStatus->Text = "Ошибка";
-			*/
+			
 			d1.TheSock = ConnectSocket;
 			TheChatWindow^ dlg1 = gcnew TheChatWindow();
 			dlg1->ShowDialog();
@@ -357,9 +344,12 @@ namespace ClientWinForms {
 		
 	private: System::Void ToConnect_Click(System::Object^ sender, System::EventArgs^ e) {		
 		Chat();
-		ToConnect->Enabled = false;
-		NickField->Enabled = false;
+		//shutdown(ConnectSocket, SD_SEND);
+		//closesocket(ConnectSocket);
+		//WSACleanup();
+		//ToConnect->Enabled = false;
+		//NickField->Enabled = false;
 	}	
-
+			  
 };
 }
