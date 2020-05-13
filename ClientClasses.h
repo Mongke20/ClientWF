@@ -58,6 +58,7 @@ MsgCl GetMessagesCl(-20, " ");
 MsgCl getCl;
 MsgCl Test(0,"Все в порядке");
 vector<string> ChatListVector;
+vector<string> userListVector;
 vector<vector<string>> OldMessageVector;
 map<int, int> Chats;
 map<int, int> tempChats;

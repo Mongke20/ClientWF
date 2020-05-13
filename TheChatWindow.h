@@ -433,24 +433,20 @@ namespace ClientWinForms {
 		}
 	}
 
-	//Запрос на получение списка пользователей
+	//Получение списка пользователей
 	void GetUsers() {
+		UserList->Items->Clear();
 		getCl.code = -1000;
 		getCl.text = " ";
 		getCl.Send();
-	}
-
-	//Переносит список пользователей из строки в ListBox
-	void getUserList(String^ froms, int cut) {
-		UserList->Items->Clear();
-		int prevPos = 0;
-		for (int i = 0; i < froms->Length - cut; i++) {
-			if (froms[i] == ',') {
-				UserList->Items->Add(froms->Substring(prevPos, i - prevPos));
-				prevPos = i + 1;
-			}
-		}
-		UserList->Items->Add(froms->Substring(prevPos, froms->Length - cut - prevPos));
+		while (getCounter != -1) {
+			label2->Text = "Что-то есть " + Convert::ToString(getCounter);
+		};
+		for (auto user : userListVector)
+			UserList->Items->Add(gcnew System::String(user.c_str()));
+		userListVector.clear();
+		getCounter = 0;
+		getCl.text = " ";
 	}
 
 	//Получение кучи сообщений
@@ -576,9 +572,21 @@ namespace ClientWinForms {
 							else getCounter--;
 						}
 					}
+					//
 					else if (code == -1000) {
-						getUserList(gcnew System::String(getCl.text.c_str()), 0);
-						getCl.text = " ";
+						int prevPos = 0;
+						while (text[prevPos] != '@') prevPos++;
+
+						int n = stoi(text.substr(0, prevPos));
+						prevPos++;
+						for (int i = prevPos; i < text.length(); i++) {
+							if (text[i] == ',') {
+								userListVector.push_back(text.substr(prevPos, i - prevPos));
+								prevPos = i + 1;
+							}
+						}
+						userListVector.push_back(text.substr(prevPos, text.length() - prevPos));
+						getCounter = -1;
 					}
 					//Получение кучи сообщений в только что открытый чат
 					else if (code == -20) {
