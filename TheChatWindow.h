@@ -245,11 +245,13 @@ namespace ClientWinForms {
 			// 
 			// UserList
 			// 
+			this->UserList->ColumnWidth = 50;
 			this->UserList->FormattingEnabled = true;
 			this->UserList->ItemHeight = 16;
 			this->UserList->Location = System::Drawing::Point(160, 201);
+			this->UserList->MultiColumn = true;
 			this->UserList->Name = L"UserList";
-			this->UserList->Size = System::Drawing::Size(546, 196);
+			this->UserList->Size = System::Drawing::Size(268, 180);
 			this->UserList->TabIndex = 11;
 			// 
 			// ChatListBox
@@ -258,7 +260,7 @@ namespace ClientWinForms {
 			this->ChatListBox->ItemHeight = 16;
 			this->ChatListBox->Location = System::Drawing::Point(160, 6);
 			this->ChatListBox->Name = L"ChatListBox";
-			this->ChatListBox->Size = System::Drawing::Size(546, 196);
+			this->ChatListBox->Size = System::Drawing::Size(552, 180);
 			this->ChatListBox->TabIndex = 10;
 			this->ChatListBox->DoubleClick += gcnew System::EventHandler(this, &TheChatWindow::ChatListBox_DoubleClick);
 			// 
@@ -284,10 +286,10 @@ namespace ClientWinForms {
 			// 
 			this->ChatUsers->AcceptsTab = true;
 			this->ChatUsers->Enabled = false;
-			this->ChatUsers->Location = System::Drawing::Point(298, 85);
+			this->ChatUsers->Location = System::Drawing::Point(428, 201);
 			this->ChatUsers->Multiline = true;
 			this->ChatUsers->Name = L"ChatUsers";
-			this->ChatUsers->Size = System::Drawing::Size(262, 139);
+			this->ChatUsers->Size = System::Drawing::Size(281, 180);
 			this->ChatUsers->TabIndex = 5;
 			// 
 			// infoTextBox
@@ -297,7 +299,7 @@ namespace ClientWinForms {
 			this->infoTextBox->Multiline = true;
 			this->infoTextBox->Name = L"infoTextBox";
 			this->infoTextBox->ReadOnly = true;
-			this->infoTextBox->Size = System::Drawing::Size(544, 389);
+			this->infoTextBox->Size = System::Drawing::Size(549, 375);
 			this->infoTextBox->TabIndex = 4;
 			// 
 			// exit
@@ -653,9 +655,6 @@ namespace ClientWinForms {
 		//Скрывает список чатов, появляется поле для ввода пользователей
 		if (ChatUsers->Enabled == false) {
 			ChatUsers->Enabled = true;
-			ChatListBox->Enabled = false;
-			ChatUsers->Visible = true;
-			ChatListBox->Visible = false;
 		}
 		//Если уже показа форма, обработка событий
 		else {
@@ -686,9 +685,6 @@ namespace ClientWinForms {
 			//Возвращение к состоянию до нажатия кнопки
 			ChatUsers->Text = "";
 			ChatUsers->Enabled = false;
-			ChatListBox->Enabled = true;
-			ChatUsers->Visible = false;
-			ChatListBox->Visible = true;
 		}
 	}
 
@@ -738,6 +734,7 @@ private: System::Void OldChats_Click(System::Object^ sender, System::EventArgs^ 
 		if (ChatListBox->SelectedIndex >= 0) {
 			//Переключение на вторую вкладку
 			tabControl1->SelectedIndex = 1;
+			
 			//Разбиение строки на код чата и список пользователей
 			string chatString = SystemToStl(ChatListBox->SelectedItem->ToString());
 			int position = 0;
