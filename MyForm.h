@@ -282,7 +282,7 @@ namespace ClientWinForms {
 			// Resolve the server address and port
 			//46.17.104.142
 			//192.168.0.11
-			iResult = getaddrinfo("192.168.0.11", DEFAULT_PORT, &hints, &result);
+			iResult = getaddrinfo("46.17.104.142", DEFAULT_PORT, &hints, &result);
 			if (iResult != 0) {
 				NickField->ForeColor = Color::Red;
 				NickField->Text = "ERROR";				

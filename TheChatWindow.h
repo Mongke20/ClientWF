@@ -67,12 +67,13 @@ namespace ClientWinForms {
 	private: System::Windows::Forms::Timer^ timer1;
 	private: System::Windows::Forms::Label^ label1;
 
-	private: System::Windows::Forms::TextBox^ UserList;
+
 	private: System::Windows::Forms::Label^ label2;
 	private: System::Windows::Forms::ListBox^ ChatListBox;
 	private: System::Windows::Forms::Button^ exitButton;
 	private: System::Windows::Forms::Timer^ timer2;
 	private: System::Windows::Forms::Label^ label3;
+	private: System::Windows::Forms::ListBox^ UserList;
 
 
 	private: System::ComponentModel::IContainer^ components;
@@ -110,6 +111,7 @@ namespace ClientWinForms {
 		{
 			this->components = (gcnew System::ComponentModel::Container());
 			this->tabPage2 = (gcnew System::Windows::Forms::TabPage());
+			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->exitButton = (gcnew System::Windows::Forms::Button());
 			this->usersInChat = (gcnew System::Windows::Forms::TextBox());
 			this->oldMessages = (gcnew System::Windows::Forms::TextBox());
@@ -119,7 +121,6 @@ namespace ClientWinForms {
 			this->tabPage1 = (gcnew System::Windows::Forms::TabPage());
 			this->ChatListBox = (gcnew System::Windows::Forms::ListBox());
 			this->label2 = (gcnew System::Windows::Forms::Label());
-			this->UserList = (gcnew System::Windows::Forms::TextBox());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->ChatUsers = (gcnew System::Windows::Forms::TextBox());
 			this->infoTextBox = (gcnew System::Windows::Forms::TextBox());
@@ -129,7 +130,7 @@ namespace ClientWinForms {
 			this->newChat = (gcnew System::Windows::Forms::Button());
 			this->timer1 = (gcnew System::Windows::Forms::Timer(this->components));
 			this->timer2 = (gcnew System::Windows::Forms::Timer(this->components));
-			this->label3 = (gcnew System::Windows::Forms::Label());
+			this->UserList = (gcnew System::Windows::Forms::ListBox());
 			this->tabPage2->SuspendLayout();
 			this->tabControl1->SuspendLayout();
 			this->tabPage1->SuspendLayout();
@@ -150,6 +151,15 @@ namespace ClientWinForms {
 			this->tabPage2->TabIndex = 1;
 			this->tabPage2->Text = L"Chat1";
 			this->tabPage2->UseVisualStyleBackColor = true;
+			// 
+			// label3
+			// 
+			this->label3->AutoSize = true;
+			this->label3->Location = System::Drawing::Point(539, 329);
+			this->label3->Name = L"label3";
+			this->label3->Size = System::Drawing::Size(46, 17);
+			this->label3->TabIndex = 5;
+			this->label3->Text = L"label3";
 			// 
 			// exitButton
 			// 
@@ -214,9 +224,9 @@ namespace ClientWinForms {
 			// 
 			// tabPage1
 			// 
+			this->tabPage1->Controls->Add(this->UserList);
 			this->tabPage1->Controls->Add(this->ChatListBox);
 			this->tabPage1->Controls->Add(this->label2);
-			this->tabPage1->Controls->Add(this->UserList);
 			this->tabPage1->Controls->Add(this->label1);
 			this->tabPage1->Controls->Add(this->ChatUsers);
 			this->tabPage1->Controls->Add(this->infoTextBox);
@@ -238,7 +248,7 @@ namespace ClientWinForms {
 			this->ChatListBox->ItemHeight = 16;
 			this->ChatListBox->Location = System::Drawing::Point(160, 6);
 			this->ChatListBox->Name = L"ChatListBox";
-			this->ChatListBox->Size = System::Drawing::Size(546, 228);
+			this->ChatListBox->Size = System::Drawing::Size(546, 196);
 			this->ChatListBox->TabIndex = 10;
 			this->ChatListBox->DoubleClick += gcnew System::EventHandler(this, &TheChatWindow::ChatListBox_DoubleClick);
 			// 
@@ -250,14 +260,6 @@ namespace ClientWinForms {
 			this->label2->Size = System::Drawing::Size(46, 17);
 			this->label2->TabIndex = 9;
 			this->label2->Text = L"label2";
-			// 
-			// UserList
-			// 
-			this->UserList->Location = System::Drawing::Point(160, 230);
-			this->UserList->Multiline = true;
-			this->UserList->Name = L"UserList";
-			this->UserList->Size = System::Drawing::Size(544, 164);
-			this->UserList->TabIndex = 8;
 			// 
 			// label1
 			// 
@@ -336,14 +338,14 @@ namespace ClientWinForms {
 			// 
 			this->timer2->Tick += gcnew System::EventHandler(this, &TheChatWindow::Timer2_Tick);
 			// 
-			// label3
+			// UserList
 			// 
-			this->label3->AutoSize = true;
-			this->label3->Location = System::Drawing::Point(539, 329);
-			this->label3->Name = L"label3";
-			this->label3->Size = System::Drawing::Size(46, 17);
-			this->label3->TabIndex = 5;
-			this->label3->Text = L"label3";
+			this->UserList->FormattingEnabled = true;
+			this->UserList->ItemHeight = 16;
+			this->UserList->Location = System::Drawing::Point(160, 201);
+			this->UserList->Name = L"UserList";
+			this->UserList->Size = System::Drawing::Size(546, 196);
+			this->UserList->TabIndex = 11;
 			// 
 			// TheChatWindow
 			// 
@@ -419,13 +421,88 @@ namespace ClientWinForms {
 		getCounter = 0;
 		getCl.text = " ";
 	}
+
+	//Переносит список пользователей в чате(строка) во вкладку с чатом.
+	void CUWithLines(String^ froms, int cut) {
+		usersInChat->Text = "";
+		for (int i = 0; i < froms->Length - cut; i++) {
+			if (froms[i] == ',') {
+				usersInChat->Text += "\r\n";
+			}
+			else usersInChat->Text += froms[i];
+		}
+	}
+
+	//Запрос на получение списка пользователей
 	void GetUsers() {
-		UserList->Text = "";
 		getCl.code = -1000;
 		getCl.text = " ";
 		getCl.Send();
-		
 	}
+
+	//Переносит список пользователей из строки в ListBox
+	void getUserList(String^ froms, int cut) {
+		UserList->Items->Clear();
+		int prevPos = 0;
+		for (int i = 0; i < froms->Length - cut; i++) {
+			if (froms[i] == ',') {
+				UserList->Items->Add(froms->Substring(prevPos, i - prevPos));
+				prevPos = i + 1;
+			}
+		}
+		UserList->Items->Add(froms->Substring(prevPos, froms->Length - cut - prevPos));
+	}
+
+	//Получение кучи сообщений
+	void GetMessages(string ChatIDStr) {
+		oldMessages->Text = " ";
+		getCl.code = -20;
+		getCl.text = ChatIDStr;
+		getCl.Send();
+		while (getCounter != -1) {
+			label2->Text = "Что-то есть " + Convert::ToString(getCounter);
+		};
+		//Надо улучшить вывод даты! Чтобы она писалась только тогда, когда она не сегодня.
+		for (auto msg : OldMessageVector) {
+			oldMessages->Text += formatStr(msg);
+		}
+		OldMessageVector.clear();
+		getCounter = 0;
+		getCl.text = " ";
+	}
+
+	//Функция для сокращения получения сообщения
+	vector<string> GetMessage(string text) {
+		vector<string> result;
+		try {
+			int position = 0;
+			int oldpoz = position;
+			//Первая часть - это отправитель
+			while (position < text.length() && text[position] != '@') {
+				position++;
+			}
+			string PersonFrom = text.substr(oldpoz, position - oldpoz);
+			result.push_back(PersonFrom);
+			position++;
+			oldpoz = position;
+			//Вторая часть - это дата
+			while (position < text.length() && text[position] != '@') {
+				position++;
+			}
+			string DateFrom = text.substr(oldpoz, position - oldpoz);
+			result.push_back(DateFrom);
+			position++;
+			//Третья часть - это время вместе с самим сообщением
+			string timeMessage = text.substr(position);
+			result.push_back(timeMessage);
+		}
+		catch (exception e) {
+			Test.text = e.what();
+			system("pause");
+		}
+		return result;
+	}
+
 	void ShowTime() {
 		seconds = time(NULL);
 		timeinfo = localtime(&seconds);
@@ -435,6 +512,8 @@ namespace ClientWinForms {
 		string str = st;
 		newMessage->Text += gcnew System::String(str.c_str()) + "\r\n";
 	}
+
+	//Приводит вектор(сообщение) к форматированному виду(строка)
 	String^ formatStr(vector<string> v) {
 		String^ result;
 		result += gcnew System::String(v[0].c_str());
@@ -445,73 +524,7 @@ namespace ClientWinForms {
 		result += "\r\n";
 		return result;
 	}
-	void GetMessages(string ChatIDStr) {
-		oldMessages->Text = " ";
-		getCl.code = -20;
-		getCl.text = ChatIDStr;
-		getCl.Send();		
-		while (getCounter != -1) {
-			label2->Text = "Что-то есть " + Convert::ToString(getCounter);
-		};
-		//Надо улучшить вывод даты! Чтобы она писалась только тогда, когда она не сегодня.
-		for (auto msg : OldMessageVector) {			
-			oldMessages->Text += formatStr(msg);
-		}
-		OldMessageVector.clear();
-		getCounter = 0;
-		getCl.text = " ";	
-	}
 
-	//Переносит список пользователей(которых ввели) из 1 вкладки во вкладку с чатом.
-	void CUWithLines(String^ froms) {
-		usersInChat->Text = "";
-		newMessage->Text += Convert::ToString(froms->Length);
-		for (int i = 0; i < froms->Length-3; i++) {
-			if (froms[i] == ',') {
-				usersInChat->Text += "\r\n";
-			}
-			else usersInChat->Text += froms[i];
-		}
-	}
-	//Функция для сокращения получения сообщения. В многопоточной функции побоялся использовать на момент наличия там ошибок, не был уверен
-	// Что ошибка не в этой функции
-	vector<string> GetMessage(string text) {
-		vector<string> result;
-		try {			
-			//Первая часть (до @) - это код чата. Он нам не особо нужен
-			int position = 0;
-			/*while (position < text.length() && text[position] != '@') {
-				position++;
-			}
-			position++;*/
-			int oldpoz = position;
-			//Вторая часть - это отправитель
-			while (position < text.length() && text[position] != '@') {
-				position++;
-			}
-			string PersonFrom = text.substr(oldpoz, position - oldpoz);
-			result.push_back(PersonFrom);
-			position++;
-			oldpoz = position;
-			//Третья часть - это дата
-			while (position < text.length() && text[position] != '@') {
-				position++;
-			}
-			string DateFrom = text.substr(oldpoz, position - oldpoz);
-			result.push_back(DateFrom);
-			position++;
-			//Четвертая часть - это время вместе с самим сообщением
-			string timeMessage = text.substr(position);
-			result.push_back(timeMessage);
-			
-		}
-		catch (exception e) {			
-			Test.text = e.what();
-			system("pause");
-		}
-		return result;
-		
-	}
 	//Получатель. Ни в ком случае НЕ ИСПОЛЬЗОВАТЬ элементы формы!!!
 	void receiver() {
 		try {
@@ -562,6 +575,10 @@ namespace ClientWinForms {
 							if (getCounter == 1) getCounter = -1;
 							else getCounter--;
 						}
+					}
+					else if (code == -1000) {
+						getUserList(gcnew System::String(getCl.text.c_str()), 0);
+						getCl.text = " ";
 					}
 					//Получение кучи сообщений в только что открытый чат
 					else if (code == -20) {
@@ -645,7 +662,7 @@ namespace ClientWinForms {
 				if (NewChat.text[0] >= '0' && NewChat.text[0] <= '9') {
 					tabControl1->SelectedIndex = 1;
 					chatID = stoi(NewChat.text);
-					CUWithLines(ChatUsers->Text);
+					CUWithLines(ChatUsers->Text, 0);
 					oldMessages->Text = "";
 					//usersInChat->Text = ChatUsers->Text;
 					//MsgCl GetStory(-20,id);
@@ -723,7 +740,7 @@ private: System::Void OldChats_Click(System::Object^ sender, System::EventArgs^ 
 			}
 			string TheChatUsers = chatString.substr(position + 1);
 			//Перенос списка пользователей во вкладку с чатом
-			CUWithLines(gcnew System::String(TheChatUsers.c_str()));
+			CUWithLines(gcnew System::String(TheChatUsers.c_str()), 3);
 			//Отправить запрос на получение сообщений для этого чата
 			GetMessages(to_string(chatID));
 		}
