@@ -63,3 +63,4 @@ map<int, int> Chats;
 map<int, int> tempChats;
 vector<string> oneMessage;
 MsgCl toExit(-40, " ");
+string ourUser;

@@ -109,7 +109,9 @@ namespace ClientWinForms {
 		void InitializeComponent(void)
 		{
 			this->components = (gcnew System::ComponentModel::Container());
+			System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(TheChatWindow::typeid));
 			this->tabPage2 = (gcnew System::Windows::Forms::TabPage());
+			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->exitButton = (gcnew System::Windows::Forms::Button());
 			this->usersInChat = (gcnew System::Windows::Forms::TextBox());
 			this->oldMessages = (gcnew System::Windows::Forms::TextBox());
@@ -129,7 +131,6 @@ namespace ClientWinForms {
 			this->newChat = (gcnew System::Windows::Forms::Button());
 			this->timer1 = (gcnew System::Windows::Forms::Timer(this->components));
 			this->timer2 = (gcnew System::Windows::Forms::Timer(this->components));
-			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->tabPage2->SuspendLayout();
 			this->tabControl1->SuspendLayout();
 			this->tabPage1->SuspendLayout();
@@ -148,8 +149,17 @@ namespace ClientWinForms {
 			this->tabPage2->Padding = System::Windows::Forms::Padding(3);
 			this->tabPage2->Size = System::Drawing::Size(712, 403);
 			this->tabPage2->TabIndex = 1;
-			this->tabPage2->Text = L"Chat1";
+			this->tabPage2->Text = L"Chat";
 			this->tabPage2->UseVisualStyleBackColor = true;
+			// 
+			// label3
+			// 
+			this->label3->AutoSize = true;
+			this->label3->Location = System::Drawing::Point(539, 329);
+			this->label3->Name = L"label3";
+			this->label3->Size = System::Drawing::Size(46, 17);
+			this->label3->TabIndex = 5;
+			this->label3->Text = L"label3";
 			// 
 			// exitButton
 			// 
@@ -290,9 +300,9 @@ namespace ClientWinForms {
 			// 
 			// exit
 			// 
-			this->exit->Location = System::Drawing::Point(25, 325);
+			this->exit->Location = System::Drawing::Point(15, 325);
 			this->exit->Name = L"exit";
-			this->exit->Size = System::Drawing::Size(110, 40);
+			this->exit->Size = System::Drawing::Size(135, 40);
 			this->exit->TabIndex = 3;
 			this->exit->Text = L"Выход";
 			this->exit->UseVisualStyleBackColor = true;
@@ -300,19 +310,19 @@ namespace ClientWinForms {
 			// 
 			// usersOnline
 			// 
-			this->usersOnline->Location = System::Drawing::Point(25, 230);
+			this->usersOnline->Location = System::Drawing::Point(11, 218);
 			this->usersOnline->Name = L"usersOnline";
-			this->usersOnline->Size = System::Drawing::Size(110, 40);
+			this->usersOnline->Size = System::Drawing::Size(139, 47);
 			this->usersOnline->TabIndex = 2;
-			this->usersOnline->Text = L"Онлайн";
+			this->usersOnline->Text = L"Список\nпользователей";
 			this->usersOnline->UseVisualStyleBackColor = true;
 			this->usersOnline->Click += gcnew System::EventHandler(this, &TheChatWindow::UsersOnline_Click);
 			// 
 			// oldChats
 			// 
-			this->oldChats->Location = System::Drawing::Point(25, 135);
+			this->oldChats->Location = System::Drawing::Point(11, 132);
 			this->oldChats->Name = L"oldChats";
-			this->oldChats->Size = System::Drawing::Size(110, 40);
+			this->oldChats->Size = System::Drawing::Size(139, 40);
 			this->oldChats->TabIndex = 1;
 			this->oldChats->Text = L"Список чатов";
 			this->oldChats->UseVisualStyleBackColor = true;
@@ -320,9 +330,9 @@ namespace ClientWinForms {
 			// 
 			// newChat
 			// 
-			this->newChat->Location = System::Drawing::Point(25, 40);
+			this->newChat->Location = System::Drawing::Point(11, 37);
 			this->newChat->Name = L"newChat";
-			this->newChat->Size = System::Drawing::Size(110, 40);
+			this->newChat->Size = System::Drawing::Size(139, 40);
 			this->newChat->TabIndex = 0;
 			this->newChat->Text = L"Новый чат";
 			this->newChat->UseVisualStyleBackColor = true;
@@ -336,21 +346,13 @@ namespace ClientWinForms {
 			// 
 			this->timer2->Tick += gcnew System::EventHandler(this, &TheChatWindow::Timer2_Tick);
 			// 
-			// label3
-			// 
-			this->label3->AutoSize = true;
-			this->label3->Location = System::Drawing::Point(539, 329);
-			this->label3->Name = L"label3";
-			this->label3->Size = System::Drawing::Size(46, 17);
-			this->label3->TabIndex = 5;
-			this->label3->Text = L"label3";
-			// 
 			// TheChatWindow
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(720, 432);
 			this->Controls->Add(this->tabControl1);
+			this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
 			this->Name = L"TheChatWindow";
 			this->Text = L"TheChatWindow";
 			this->FormClosing += gcnew System::Windows::Forms::FormClosingEventHandler(this, &TheChatWindow::TheChatWindow_FormClosing);
@@ -666,7 +668,7 @@ namespace ClientWinForms {
 
 //События при загрузке формы
 private: System::Void TheChatWindow_Load(System::Object^ sender, System::EventArgs^ e) {
-	
+	Text = gcnew System::String(ourUser.c_str());
 	//Начало потока, где идет постоянный прием.
 	ThreadStart^ thrStart = gcnew ThreadStart(this, &TheChatWindow::receiver);
 	Thread^ t1 = gcnew Thread(thrStart);
@@ -754,6 +756,7 @@ private: System::Void Timer2_Tick(System::Object^ sender, System::EventArgs^ e) 
 }
 private: System::Void UsersOnline_Click(System::Object^ sender, System::EventArgs^ e) {
 	GetUsers();
+	
 }
 };
 }

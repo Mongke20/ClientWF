@@ -79,6 +79,7 @@ namespace ClientWinForms {
 	private: System::Windows::Forms::Timer^ timer1;
 	private: System::Windows::Forms::Label^ label1;
 	private: System::Windows::Forms::TextBox^ PasswordField;
+	private: System::Windows::Forms::Label^ label2;
 	private: System::ComponentModel::IContainer^ components;
 
 	private:
@@ -95,6 +96,7 @@ namespace ClientWinForms {
 		void InitializeComponent(void)
 		{
 			this->components = (gcnew System::ComponentModel::Container());
+			System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(MyForm::typeid));
 			this->NickField = (gcnew System::Windows::Forms::TextBox());
 			this->LabelNick = (gcnew System::Windows::Forms::Label());
 			this->ToConnect = (gcnew System::Windows::Forms::Button());
@@ -103,6 +105,7 @@ namespace ClientWinForms {
 			this->timer1 = (gcnew System::Windows::Forms::Timer(this->components));
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->PasswordField = (gcnew System::Windows::Forms::TextBox());
+			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->SuspendLayout();
 			// 
 			// NickField
@@ -169,11 +172,22 @@ namespace ClientWinForms {
 			this->PasswordField->Size = System::Drawing::Size(100, 22);
 			this->PasswordField->TabIndex = 1;
 			// 
+			// label2
+			// 
+			this->label2->AutoSize = true;
+			this->label2->Location = System::Drawing::Point(24, 145);
+			this->label2->Name = L"label2";
+			this->label2->Size = System::Drawing::Size(75, 17);
+			this->label2->TabIndex = 14;
+			this->label2->Text = L"Отключен";
+			this->label2->Visible = false;
+			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(313, 215);
+			this->Controls->Add(this->label2);
 			this->Controls->Add(this->PasswordField);
 			this->Controls->Add(this->label1);
 			this->Controls->Add(this->ConStatus);
@@ -181,8 +195,9 @@ namespace ClientWinForms {
 			this->Controls->Add(this->ToConnect);
 			this->Controls->Add(this->LabelNick);
 			this->Controls->Add(this->NickField);
+			this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
 			this->Name = L"MyForm";
-			this->Text = L"MyForm";
+			this->Text = L"Вход";
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -200,6 +215,7 @@ namespace ClientWinForms {
 		int recvbuflen = DEFAULT_BUFLEN;
 		void EnterName(SOCKET ConSock) {
 			std::string username = SystemToStl(NickField->Text);
+			ourUser = username;
 			username += "@";
 			username += SystemToStl(PasswordField->Text);
 			int name_size = username.size() + 1;
@@ -321,13 +337,18 @@ namespace ClientWinForms {
 
 			//идентификация клиента
 			EnterName(ConnectSocket);
-			std::string StatusStr = CheckStatus(ConnectSocket);			
+			std::string StatusStr = CheckStatus(ConnectSocket);
+			if (StatusStr != "Подключено\n") {
+				label2->Visible = true;
+				label2->Text = gcnew System::String(StatusStr.c_str());
+				return;
+			}
 			//Проверка на уникальность сессии ника
-			while (StatusStr == "Wrong name") {
+			/*while (StatusStr == "Wrong name") {
 				NickField->Text = gcnew System::String(StatusStr.c_str());
 				EnterName(ConnectSocket);
 				StatusStr = CheckStatus(ConnectSocket);
-			}
+			}*/
 			ConStatus->Text = "Подключен";
 			
 			d1.TheSock = ConnectSocket;
@@ -342,8 +363,11 @@ namespace ClientWinForms {
 			
 		}
 		
-	private: System::Void ToConnect_Click(System::Object^ sender, System::EventArgs^ e) {		
+	private: System::Void ToConnect_Click(System::Object^ sender, System::EventArgs^ e) {
+		label2->Visible = false;
+		Hide();
 		Chat();
+		Show();
 		//shutdown(ConnectSocket, SD_SEND);
 		//closesocket(ConnectSocket);
 		//WSACleanup();
