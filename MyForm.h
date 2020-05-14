@@ -203,16 +203,22 @@ namespace ClientWinForms {
 
 		}
 #pragma endregion
-		//Функция для перевода строки этой штуки в нормальную строку
+		//!Функция для перевода строки System::String в std::string
 		string SystemToStl(String^ s){
 			using namespace Runtime::InteropServices;
 			const char* ptr = (const char*)(Marshal::StringToHGlobalAnsi(s)).ToPointer();
-			return string(ptr);
+			string str = string(ptr);
+			Marshal::FreeHGlobal(IntPtr((void*)ptr));
+			return str;
 		}
-		//Используемый сокет
-		SOCKET ConnectSocket = INVALID_SOCKET;
+
+		SOCKET ConnectSocket = INVALID_SOCKET; //!Переменная для хранения используемого сокета
 		int iResult;
 		int recvbuflen = DEFAULT_BUFLEN;
+
+		/*! Функция для отправки ника и пароля, введенных пользователем, на сервер для проверки
+		Перед отправкой они соединяются в одну строку с использованием служебного символа "@"
+		*/
 		void EnterName(SOCKET ConSock) {
 			std::string username = SystemToStl(NickField->Text);
 			ourUser = username;
@@ -232,7 +238,11 @@ namespace ClientWinForms {
 			return;
 		}
 
-		//Функция проверки статуса
+		/*!Функция проверки статуса, т.е. ответа сервера.
+		"Подключено" - при успешном подключении
+		"Неправильный пароль!" - если пароль введен неправильно
+		"Такой пользователь уже подключен!" - если такой пользователь уже онлайн с другого устройства
+		*/
 		std::string CheckStatus(SOCKET ConSock) {
 			int StatusSize;
 			iResult = recv(ConSock, (char*)& StatusSize, sizeof(int), 0);
@@ -244,43 +254,11 @@ namespace ClientWinForms {
 			return StatusStr;
 		}
 		
-		/*void receiver() {	
-			try {
-				int msg_size;
-				int name_size;
-				int iResult = 0;
-				do {
-					// Получение имени отправителя
-					recv(ConnectSocket, (char*)& name_size, sizeof(int), 0);
-					char* name = new char[name_size + 2];
-					iResult = recv(ConnectSocket, name, name_size, 0);
-					name[name_size] = '\n';
-					name[name_size + 1] = '\0';
-					// Получение сообщения
-					recv(ConnectSocket, (char*)& msg_size, sizeof(int), 0);
-					char* answer = new char[msg_size + 2];
-					iResult = recv(ConnectSocket, answer, msg_size, 0);
-					answer[msg_size] = '\n';
-					answer[msg_size + 1] = '\0';
-					if (iResult > 0) {
-						std::string Got_Msg = answer;
-						std::string Got_Nm = name;
-						Got_Msg = "from " + Got_Nm + " msg " + Got_Msg;
-						ToChange = gcnew System::String(Got_Msg.c_str());
-
-					}
-					else if (iResult == 0)
-						ConStatus->Text = "Отключен";
-					else ConStatus->Text = "Error";
-						delete[] answer;
-				} while (iResult > 0);
-			}
-			catch (...) {
-				ConStatus->Text = "Server unable" ;
-				return;
-			}
-		}*/
-		
+		/*! Функция для запуска чата.
+		Запускает все необходимое для работы с сокетами. Подключается к серверу. Отправляет для проверки имя пользователя
+		и пароль. В случае успешного подключения открывает новое окно. В случае провала выводит информационное сообщение
+		и завершается
+		*/
 		void Chat() {
 			SetConsoleCP(1251); // Ввод с консоли в кодировке 1251
 			SetConsoleOutputCP(1251);
@@ -334,35 +312,24 @@ namespace ClientWinForms {
 				return;
 			}
 			
-
 			//идентификация клиента
 			EnterName(ConnectSocket);
+			//! Переменная для хранения ответа сервера на попытку подключения
 			std::string StatusStr = CheckStatus(ConnectSocket);
 			if (StatusStr != "Подключено\n") {
 				label2->Visible = true;
 				label2->Text = gcnew System::String(StatusStr.c_str());
 				return;
 			}
-			//Проверка на уникальность сессии ника
-			/*while (StatusStr == "Wrong name") {
-				NickField->Text = gcnew System::String(StatusStr.c_str());
-				EnterName(ConnectSocket);
-				StatusStr = CheckStatus(ConnectSocket);
-			}*/
+			
 			ConStatus->Text = "Подключен";
 			
 			d1.TheSock = ConnectSocket;
 			TheChatWindow^ dlg1 = gcnew TheChatWindow();
-			dlg1->ShowDialog();
-			
-			/*ThreadStart^ thrStart = gcnew ThreadStart(this, &MyForm::receiver);
-			Thread^ t1 = gcnew Thread(thrStart);
-			t1->IsBackground = true;
-			t1->Start();
-			timer1->Start();*/
-			
+			dlg1->ShowDialog();			
 		}
-		
+	
+	//!При нажатиии кнопки "Подключиться" скрывает эту форму, вызывает функцию Chat(), а после ее завершения снова показывает форму
 	private: System::Void ToConnect_Click(System::Object^ sender, System::EventArgs^ e) {
 		label2->Visible = false;
 		Hide();

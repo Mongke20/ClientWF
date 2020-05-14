@@ -390,18 +390,23 @@ namespace ClientWinForms {
 		//														//
 		//////////////////////////////////////////////////////////
 	
+	//! Строка, в которую записывается текст только что полученного сообщения
 	String^ ToChange;
+	/*! Строка, в которой хранится текст последнего полученного и обработанного сообщения.
+	В таймере она сравнивается со строкой ToChange, и если она изменилась, это значит, что полученно новое сообщение
+	*/
 	String^ CompWith;
-	//Счетчик для закрытия формы
+	//! Счетчик секунд для паузы перед закрытием формы
 	int closeCounter = 0;
-	//Айди открытого чата
+	//! Переменная для хранения кода открытого чата
 	int chatID = 0;
-	//Вспомогательная переменная для получения чатов и сообщений
+	//! Вспомогательная переменная для получения чатов и сообщений
 	int getCounter = 0;
-	//Переменная для отладки
+	//! Переменная для отладки
 	int CurID = 0;
 	bool TimeDo = false;
-	//Функция преобразования системной строки в обычную
+
+	//!Функция для перевода строки System::String в std::string
 	string SystemToStl(String^ s) {
 		using namespace Runtime::InteropServices;
 		const char* ptr = (const char*)(Marshal::StringToHGlobalAnsi(s)).ToPointer();
@@ -409,7 +414,12 @@ namespace ClientWinForms {
 		Marshal::FreeHGlobal(IntPtr((void*)ptr));
 		return str;
 	}
-	//Функция получения чатов
+
+	/*! \brief Функция для получения списка чатов
+	Формирует запрос и отправляет его на сервер. После того, как в другом потоке сообщения от сервера получены, обработаны
+	и вставленны в вектор, эта функция заполняет ListBox по одному чату в каждый пункт. Затем и вектор, и экземпляр класса
+	для пересылки запросов очищаются.
+	*/
 	void GetChats() {
 		ChatListBox->Items->Clear();
 		getCl.code = -100;
@@ -427,7 +437,9 @@ namespace ClientWinForms {
 		getCl.text = " ";
 	}
 
-	//Переносит список пользователей в чате(строка) во вкладку с чатом.
+	/*! Переносит список пользователей в чате (строка, полученная в первом аргументе) во вкладку с чатом.
+	Второй аргумент нужен для обрезки непечатных символов в конце строки, если это необходимо
+	*/
 	void CUWithLines(String^ froms, int cut) {
 		usersInChat->Text = "";
 		for (int i = 0; i < froms->Length - cut; i++) {
@@ -438,7 +450,11 @@ namespace ClientWinForms {
 		}
 	}
 
-	//Получение списка пользователей
+	/*! \brief Функция для получения списка пользователей
+	Формирует запрос и отправляет его на сервер. После того, как в другом потоке сообщения от сервера получены, обработаны
+	и вставленны в вектор, эта функция заполняет ListBox по одному пользователю в каждый пункт. Затем и вектор, и экземпляр
+	класса для пересылки запросов очищаются.
+	*/
 	void GetUsers() {
 		UserList->Items->Clear();
 		getCl.code = -1000;
@@ -454,7 +470,11 @@ namespace ClientWinForms {
 		getCl.text = " ";
 	}
 
-	//Получение кучи сообщений
+	/*! \brief Функция для получения не более, чем 40 сообщений в открытый чат
+	Формирует запрос и отправляет его на сервер. После того, как в другом потоке сообщения от сервера получены, обработаны
+	и вставленны в вектор, эта функция переносит их из вектора в textBox. Затем и вектор, и экземпляр класса для пересылки
+	запросов очищаются.
+	*/
 	void GetMessages(string ChatIDStr) {
 		oldMessages->Text = " ";
 		getCl.code = -20;
@@ -463,7 +483,6 @@ namespace ClientWinForms {
 		while (getCounter != -1) {
 			label2->Text = "Что-то есть " + Convert::ToString(getCounter);
 		};
-		//Надо улучшить вывод даты! Чтобы она писалась только тогда, когда она не сегодня.
 		for (auto msg : OldMessageVector) {
 			oldMessages->Text += formatStr(msg);
 		}
@@ -472,7 +491,7 @@ namespace ClientWinForms {
 		getCl.text = " ";
 	}
 
-	//Функция для сокращения получения сообщения
+	//! Функция для получения сообщения. Разбивает строку на поля по служебному символу "@". Возвращает вектор строк
 	vector<string> GetMessage(string text) {
 		vector<string> result;
 		try {
@@ -504,6 +523,10 @@ namespace ClientWinForms {
 		return result;
 	}
 
+	/*! Функция для отладки. Выводит текущее время.
+	Нужна для отслеживания времени, которое требуется программе для выполнения тех или иных действий, в том числе
+	взаимодействия с сервером
+	*/
 	void ShowTime() {
 		seconds = time(NULL);
 		timeinfo = localtime(&seconds);
@@ -514,7 +537,7 @@ namespace ClientWinForms {
 		newMessage->Text += gcnew System::String(str.c_str()) + "\r\n";
 	}
 
-	//Приводит вектор(сообщение) к форматированному виду(строка)
+	//!Приводит сообщение (вектор) к форматированному виду (строка)
 	String^ formatStr(vector<string> v) {
 		String^ result;
 		result += gcnew System::String(v[0].c_str());
@@ -526,35 +549,41 @@ namespace ClientWinForms {
 		return result;
 	}
 
-	//Получатель. Ни в ком случае НЕ ИСПОЛЬЗОВАТЬ элементы формы!!!
+	/*! \brief Функция для получения всех сообщений от сервера и их идентификации
+	В бесконечном цикле получает сообщения от сервера при помощи сокетов. Разбивает их на код и текст. В зависимости
+	от кода, размещает текст полученных сообщений в соответствующих векторах. Меняет переменную getCounter, чтобы сообщить
+	функциям в другом потоке, что все сообщения по данному запросу полученны.
+	Из-за работы в режиме нескольких потоков недопустимо обращаться в этой функции к элементам формы,
+	так как они были созданы в базовом потоке.
+	*/
 	void receiver() {
 		try {
 			Test.code++;
 			int iResult = 0;
 			do {
 				int msgS = 0;
-				recv(d1.TheSock, (char*)& msgS, sizeof(int), 0);				
-				char* msg = new char[msgS + 2];
+				recv(d1.TheSock, (char*)& msgS, sizeof(int), 0);
+				char* msg = new char[msgS + 2]; //! Переменная для получения очередного сообщения от сервера
 				iResult = recv(d1.TheSock, msg, msgS, 0);
 				msg[msgS] = '\n';
 				msg[msgS + 1] = '\0';
-				string msgStr = msg;
+				string msgStr = msg; //! Переменная типа string для дальнейшей работы с сообщением
 				delete[]msg;
 				if (iResult > 0) {
-					int position = 0;
+					int position = 0; //! Позиция в строке при разбиении ее на код и текст
 					while (position < msgStr.length() && msgStr[position] != '@') {
 						position++;
 					}
-					int code = stoi(msgStr.substr(0, position));
+					int code = stoi(msgStr.substr(0, position)); //! Код полученного сообщения
 					CurID = code;
-					string text = msgStr.substr(position + 1);
-					//Когда получаем ответ по созданию нового чата
+					string text = msgStr.substr(position + 1); //! Текст полученного сообщения
+					//! Получение ответа на создание нового чата
 					if (code == -10) {
 						chatID = stoi(text);
 						NewChat.code = code;
 						NewChat.text = text;
 					}
-					//Получение списка доступных чатов
+					//! Получение списка доступных чатов
 					else if (code == -100) {						
 						if (getCounter == 0) {
 							getCounter = stoi(text);
@@ -563,13 +592,14 @@ namespace ClientWinForms {
 							if (getCounter == 0) getCounter--;
 						}
 						else {
-							position = 0;
+							position = 0; //! Позиция в строке при разбиении ее на код чата и список пользователей
 							while (position < text.length() && text[position] != '@') {
 								position++;
 							}
-							string ChatIDStr = text.substr(0, position++);
-							string TheChatUsers = text.substr(position);
+							string ChatIDStr = text.substr(0, position++); //! Код чата
+							string TheChatUsers = text.substr(position); //! Список пользователей в чате
 							Chats[stoi(ChatIDStr)] = tempChats[stoi(ChatIDStr)];
+							//! Форматированная строка с информацией о чате для записи её в listBox
 							string newChat = ChatIDStr + '(' + to_string(tempChats[stoi(ChatIDStr)]) + ") " + TheChatUsers + "\r\n";
 							getCl.text += newChat;
 							ChatListVector.push_back(newChat);
@@ -577,12 +607,12 @@ namespace ClientWinForms {
 							else getCounter--;
 						}
 					}
-					//
+					//! Получение списка пользователей
 					else if (code == -1000) {
-						int prevPos = 0;
+						int prevPos = 0; //! Предыдущая позиция символа в строке для выделения подстроки
 						while (text[prevPos] != '@') prevPos++;
 
-						int n = stoi(text.substr(0, prevPos));
+						int n = stoi(text.substr(0, prevPos)); //! Количество пользователей онлайн
 						prevPos++;
 						for (int i = prevPos; i < text.length(); i++) {
 							if (text[i] == ',') {
@@ -593,7 +623,7 @@ namespace ClientWinForms {
 						userListVector.push_back(text.substr(prevPos, text.length() - prevPos));
 						getCounter = -1;
 					}
-					//Получение кучи сообщений в только что открытый чат
+					//! Получение не более, чем 40 сообщений в открытый чат
 					else if (code == -20) {
 						if (getCounter == 0) {
 							getCounter = stoi(text);
@@ -605,21 +635,15 @@ namespace ClientWinForms {
 							else getCounter--;
 						}
 					}
-					//Получение обычных сообщений в какой-либо чат. НАДО ДОДЕЛАТЬ
+					//! Получение сообщений, отправленных кем-то прямо сейчас, по одному, в какой-либо чат.
 					else if (code > 0) {
-						int ChatsSize = Chats.size();
-						/*if (Chats.count(code) == 0) {
-							GetChats();
-						}
-						else {*/
-							Chats[code]++;
-							ToChange = gcnew System::String(text.c_str());
-							if (code == chatID) {
-								Chats[code] = 0;
-								oneMessage = GetMessage(text);								
-							}							
-							else TimeDo = true;
-						//}
+						Chats[code]++;
+						ToChange = gcnew System::String(text.c_str());
+						if (code == chatID) {
+							Chats[code] = 0;
+							oneMessage = GetMessage(text);								
+						}							
+						else TimeDo = true;
 					}
 				}
 				else if (iResult == 0) {
@@ -636,11 +660,10 @@ namespace ClientWinForms {
 		}
 	}
 	
-	//функция отправки сообщения
+	//! Функция отправки сообщения в чат
 	void TheSender() {
 		try {
-			std::string str;
-			// Ввод сообщения и разделение его на ник получателя, сообщение и слова-маркеры
+			std::string str; //Строка, в которую записывается сообщение из textBox
 			str = SystemToStl(newMessage->Text);
 			toSend.code = chatID;
 			toSend.text = str;
@@ -651,13 +674,19 @@ namespace ClientWinForms {
 			return;
 		}
 	}
-	// При клике (ЕЩЕ ДОДЕЛЫВАТЬ НАДО) на кнопку новый чат
+
+	/*! \brief Функция при нажатии на кнопку "Новый чат"
+	Скрывает список чатов, появляется поле для ввода пользователей, которые должны быть в новом чате.
+	Когда пользователь введет список ников через запятую, отправляет запрос на сервер. Затем ждет, когда объект класса,
+	использующийся для создания нового чата, изменится. В поле text вместо списка пользователей появится код созданного
+	чата. В случае успешного создания переключается на вторую вкладку формы (с чатом). Вызывает функцию для записи списка
+	пользователей в соответствующее поле. Очищает поле с историей сообщений.
+	Возвращает textBox ChatUsers к состоянию до нажатия кнопки
+	*/
 	private: System::Void NewChat_Click(System::Object^ sender, System::EventArgs^ e) {
-		//Скрывает список чатов, появляется поле для ввода пользователей
 		if (ChatUsers->Enabled == false) {
 			ChatUsers->Enabled = true;
 		}
-		//Если уже показа форма, обработка событий
 		else {
 			if (ChatUsers->Text->Length == 0 || ChatUsers->Text == "Введите пользователей") {
 				ChatUsers->Text = "Введите пользователей";
@@ -689,7 +718,11 @@ namespace ClientWinForms {
 		}
 	}
 
-//События при загрузке формы
+/*! События при загрузке формы
+В заголовок окна записывается ник текущего пользователя. Запускается поток для постоянного приема сообщений от сервера.
+Запускается таймер для получения новых сообщений. Для второго таймера выставляется интервал ожидания, который будет нужен
+при закрытии формы.
+*/
 private: System::Void TheChatWindow_Load(System::Object^ sender, System::EventArgs^ e) {
 	Text = gcnew System::String(ourUser.c_str());
 	//Начало потока, где идет постоянный прием.
@@ -702,7 +735,7 @@ private: System::Void TheChatWindow_Load(System::Object^ sender, System::EventAr
 	timer2->Interval = 1000;
 }
 
-//Таймер использовался для отладки. Скорее всего, нужен для отображения сообщений в текущем чате.(так было раньше)
+//! Таймер для отображения сообщений в текущем чате и отладки.
 private: System::Void Timer1_Tick(System::Object^ sender, System::EventArgs^ e) {
 	label1->Text = "Таймер работает";
 	//label3->Text = Convert::ToString(chatID);
@@ -721,27 +754,28 @@ private: System::Void Timer1_Tick(System::Object^ sender, System::EventArgs^ e) 
 	
 }
 
-//При нажатии на кнопку отправить сообщение во 2 вкладке
+//! При нажатии на кнопку отправить сообщение во 2 вкладке вызывается функция отправки
 private: System::Void SendMessage_Click(System::Object^ sender, System::EventArgs^ e) {
 	TheSender();
 }
 
-//При нажатии на кнопку список чатов
+//! При нажатии на кнопку список чатов вызывается функция получения чатов
 private: System::Void OldChats_Click(System::Object^ sender, System::EventArgs^ e) {
 	GetChats();
 }
 
 
-//При двойном клике на чат
+/*! При двойном клике на чат в списке чатов вторая вкладка открывается с этим чатом и отправляется запрос
+на получение истории сообщений в этот чат
+*/
 	private: System::Void ChatListBox_DoubleClick(System::Object^ sender, System::EventArgs^ e) {
 		newMessage->Text = "";
 		if (ChatListBox->SelectedIndex >= 0) {
 			//Переключение на вторую вкладку
 			tabControl1->SelectedIndex = 1;
-			
-			//Разбиение строки на код чата и список пользователей
+			//! Строка из пункта списка чатов для разбиения на код чата и список пользователей
 			string chatString = SystemToStl(ChatListBox->SelectedItem->ToString());
-			int position = 0;
+			int position = 0; //! Позиция в строке при разбиении её на части при помощи substr
 			while (chatString[position] != '(') {
 				position++;
 			}
@@ -757,26 +791,28 @@ private: System::Void OldChats_Click(System::Object^ sender, System::EventArgs^ 
 			GetMessages(to_string(chatID));
 		}
 }
-//Закрытие формы
+//! Закрытие формы кнопкой "выход". Отправляет серверу запрос на выход и ждет секунду, чтобы успеть выйти
 private: System::Void Exit_Click(System::Object^ sender, System::EventArgs^ e) {	
 	toExit.Send();
 	timer2->Start();
 	//this->Close();
 }
-//Закрытие формы
+//! Закрытие формы. Отправляет серверу запрос на выход и ждет секунду, чтобы успеть выйти
 private: System::Void TheChatWindow_FormClosing(System::Object^ sender, System::Windows::Forms::FormClosingEventArgs^ e) {	
 	toExit.Send();
 	timer2->Start();
 }
-//Выход из чата
+//! Выход из чата. Отправляет запрос серверу на выход из чата. Переходит на первую вкладку. Очищает историю сообщений чата
 private: System::Void ExitButton_Click(System::Object^ sender, System::EventArgs^ e) {
 	tabControl1->SelectedIndex = 0;
-	MsgCl toExitChat(-30,to_string(chatID));
+	MsgCl toExitChat(-30,to_string(chatID)); //! Экземпляр класса для отправки запроса на выход из чата
 	toExitChat.Send();
 	oldMessages->Text = "";
 	newMessage->Text = "";
 	GetChats();
 }
+
+//! Таймер для ожидания перед выходом. Нужен, чтобы все необходимые операции успели завершиться.
 private: System::Void Timer2_Tick(System::Object^ sender, System::EventArgs^ e) {
 	if (closeCounter == 1) {
 		closeCounter = 0;		
@@ -784,6 +820,11 @@ private: System::Void Timer2_Tick(System::Object^ sender, System::EventArgs^ e) 
 	}
 	else closeCounter++;
 }
+
+/*! Получение списка пользователей.
+При нажатии на кнопку вызывает соответствующую функцию. Сначала выводятся те пользователи, которые сейчас онлайн,
+потом все остальные. Внутри группы пользователи сортируются в алфавитном порядке
+*/
 private: System::Void UsersOnline_Click(System::Object^ sender, System::EventArgs^ e) {
 	GetUsers();
 }
