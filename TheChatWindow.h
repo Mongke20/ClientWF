@@ -417,7 +417,8 @@ namespace ClientWinForms {
 		getCl.Send();
 		while (getCounter !=-1) {
 			label2->Text = "Что-то есть " + Convert::ToString(getCounter);
-		};		
+		};
+		
 		for (auto i : ChatListVector) {
 			ChatListBox->Items->Add(gcnew System::String(i.c_str()));
 		}
@@ -612,11 +613,11 @@ namespace ClientWinForms {
 						}
 						else {*/
 							Chats[code]++;
+							ToChange = gcnew System::String(text.c_str());
 							if (code == chatID) {
 								Chats[code] = 0;
-								oneMessage = GetMessage(text);
-								ToChange = gcnew System::String(text.c_str());
-							}
+								oneMessage = GetMessage(text);								
+							}							
 							else TimeDo = true;
 						//}
 					}
@@ -703,13 +704,16 @@ private: System::Void TheChatWindow_Load(System::Object^ sender, System::EventAr
 
 //Таймер использовался для отладки. Скорее всего, нужен для отображения сообщений в текущем чате.(так было раньше)
 private: System::Void Timer1_Tick(System::Object^ sender, System::EventArgs^ e) {
+	label1->Text = "Таймер работает";
 	//label3->Text = Convert::ToString(chatID);
 	label2->Text =  "Test.code = " + Convert::ToString(Test.code) + " Test.text = " + gcnew System::String(Test.text.c_str())
 		+ " CurID = "  + CurID;
 	if (CompWith != ToChange) {		
 		oldMessages->Text += formatStr(oneMessage);
 		CompWith = ToChange;
+		label1->Text = "До захода";
 		if (TimeDo) {
+			label1->Text = "Зашел";
 			GetChats();
 			TimeDo = false;
 		}
