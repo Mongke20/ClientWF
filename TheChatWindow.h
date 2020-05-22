@@ -246,11 +246,13 @@ namespace ClientWinForms {
 			// UserList
 			// 
 			this->UserList->ColumnWidth = 50;
+			this->UserList->ForeColor = System::Drawing::Color::Black;
 			this->UserList->FormattingEnabled = true;
 			this->UserList->ItemHeight = 16;
 			this->UserList->Location = System::Drawing::Point(160, 201);
 			this->UserList->MultiColumn = true;
 			this->UserList->Name = L"UserList";
+			this->UserList->SelectionMode = System::Windows::Forms::SelectionMode::MultiSimple;
 			this->UserList->Size = System::Drawing::Size(268, 180);
 			this->UserList->TabIndex = 11;
 			// 
@@ -389,7 +391,8 @@ namespace ClientWinForms {
 		//														//
 		//														//
 		//////////////////////////////////////////////////////////
-	
+	//Количество пользователей онлайн
+		int UsersCount = 0;
 	//! Строка, в которую записывается текст только что полученного сообщения
 	String^ ToChange;
 	/*! Строка, в которой хранится текст последнего полученного и обработанного сообщения.
@@ -463,11 +466,14 @@ namespace ClientWinForms {
 		while (getCounter != -1) {
 			label2->Text = "Что-то есть " + Convert::ToString(getCounter);
 		};
-		for (auto user : userListVector)
+		for (auto user : userListVector) {
+			if (UserList->Items->Count == UsersCount) UserList->Items->Add("|______|");
 			UserList->Items->Add(gcnew System::String(user.c_str()));
+		}
 		userListVector.clear();
 		getCounter = 0;
 		getCl.text = " ";
+		UserList->SelectionMode = SelectionMode::None;
 	}
 
 	/*! \brief Функция для получения не более, чем 40 сообщений в открытый чат
@@ -613,6 +619,7 @@ namespace ClientWinForms {
 						while (text[prevPos] != '@') prevPos++;
 
 						int n = stoi(text.substr(0, prevPos)); //! Количество пользователей онлайн
+						UsersCount = n;
 						prevPos++;
 						for (int i = prevPos; i < text.length(); i++) {
 							if (text[i] == ',') {
@@ -828,5 +835,6 @@ private: System::Void Timer2_Tick(System::Object^ sender, System::EventArgs^ e) 
 private: System::Void UsersOnline_Click(System::Object^ sender, System::EventArgs^ e) {
 	GetUsers();
 }
+
 };
 }
