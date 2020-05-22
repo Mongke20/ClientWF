@@ -74,6 +74,7 @@ namespace ClientWinForms {
 	private: System::Windows::Forms::Timer^ timer2;
 	private: System::Windows::Forms::Label^ label3;
 	private: System::Windows::Forms::ListBox^ UserList;
+	private: System::Windows::Forms::ToolTip^ toolTip1;
 
 
 	private: System::ComponentModel::IContainer^ components;
@@ -132,6 +133,7 @@ namespace ClientWinForms {
 			this->newChat = (gcnew System::Windows::Forms::Button());
 			this->timer1 = (gcnew System::Windows::Forms::Timer(this->components));
 			this->timer2 = (gcnew System::Windows::Forms::Timer(this->components));
+			this->toolTip1 = (gcnew System::Windows::Forms::ToolTip(this->components));
 			this->tabPage2->SuspendLayout();
 			this->tabControl1->SuspendLayout();
 			this->tabPage1->SuspendLayout();
@@ -341,6 +343,7 @@ namespace ClientWinForms {
 			this->newChat->Size = System::Drawing::Size(124, 50);
 			this->newChat->TabIndex = 0;
 			this->newChat->Text = L"Новый чат";
+			this->toolTip1->SetToolTip(this->newChat, L"Создать новый чат");
 			this->newChat->UseVisualStyleBackColor = true;
 			this->newChat->Click += gcnew System::EventHandler(this, &TheChatWindow::NewChat_Click);
 			// 
@@ -470,7 +473,6 @@ namespace ClientWinForms {
 			if (UserList->Items->Count == UsersCount) UserList->Items->Add("|______|");
 			UserList->Items->Add(gcnew System::String(user.c_str()));
 		}
-		userListVector.clear();
 		getCounter = 0;
 		getCl.text = " ";
 		UserList->SelectionMode = SelectionMode::None;
@@ -554,6 +556,27 @@ namespace ClientWinForms {
 		result += "\r\n";
 		return result;
 	}
+	
+	vector<string> checkChat(String^ froms) {
+		int pos = 0;
+		int prevPos = 0;
+		vector<string> wrongUsers;
+		string temp;
+		while (pos < froms->Length) {
+			while (pos < froms->Length && froms[pos] != ',') {
+				pos++;
+			}
+			temp = SystemToStl(froms->Substring(prevPos, pos - prevPos));
+			auto result = find(userListVector.begin(), userListVector.end(), temp);
+			if (result == userListVector.end()) {
+				wrongUsers.push_back(temp);
+			}
+			pos++;
+			prevPos = pos;
+		}
+		return wrongUsers;
+	}
+
 
 	/*! \brief Функция для получения всех сообщений от сервера и их идентификации
 	В бесконечном цикле получает сообщения от сервера при помощи сокетов. Разбивает их на код и текст. В зависимости
@@ -615,6 +638,7 @@ namespace ClientWinForms {
 					}
 					//! Получение списка пользователей
 					else if (code == -1000) {
+						userListVector.clear();
 						int prevPos = 0; //! Предыдущая позиция символа в строке для выделения подстроки
 						while (text[prevPos] != '@') prevPos++;
 
@@ -701,6 +725,15 @@ namespace ClientWinForms {
 			else {
 				newMessage->Text = "";
 				NewChat.code = -10;
+				vector<string> wrongUsers = checkChat(ChatUsers->Text);
+				if (wrongUsers.size() > 0) {
+					ChatUsers->Text = "Ошибка! Эти пользователи не существуют:";
+					ChatUsers->Text += "\r\n";
+					for (auto user : wrongUsers) {
+						ChatUsers->Text = ChatUsers->Text + gcnew System::String(user.c_str()) + "\r\n";
+					}
+					return;
+				}
 				NewChat.text = SystemToStl(ChatUsers->Text);
 				NewChat.Send();
 				while (NewChat.text == SystemToStl(ChatUsers->Text)) {
@@ -835,6 +868,5 @@ private: System::Void Timer2_Tick(System::Object^ sender, System::EventArgs^ e) 
 private: System::Void UsersOnline_Click(System::Object^ sender, System::EventArgs^ e) {
 	GetUsers();
 }
-
 };
 }

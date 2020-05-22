@@ -94,6 +94,7 @@ namespace ClientWinForms {
 	private: System::Windows::Forms::Label^ label1;
 	private: System::Windows::Forms::TextBox^ PasswordField;
 	private: System::Windows::Forms::Label^ label2;
+	private: System::Windows::Forms::ToolTip^ toolTip1;
 	private: System::ComponentModel::IContainer^ components;
 
 	private:
@@ -120,6 +121,7 @@ namespace ClientWinForms {
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->PasswordField = (gcnew System::Windows::Forms::TextBox());
 			this->label2 = (gcnew System::Windows::Forms::Label());
+			this->toolTip1 = (gcnew System::Windows::Forms::ToolTip(this->components));
 			this->SuspendLayout();
 			// 
 			// NickField
@@ -293,7 +295,7 @@ namespace ClientWinForms {
 			// Resolve the server address and port
 			//46.17.104.142
 			//192.168.0.11
-			iResult = getaddrinfo("192.168.0.11", DEFAULT_PORT, &hints, &result);
+			iResult = getaddrinfo("46.17.104.142", DEFAULT_PORT, &hints, &result);
 			if (iResult != 0) {
 				NickField->ForeColor = Color::Red;
 				NickField->Text = "ERROR";				
