@@ -172,6 +172,7 @@ namespace ClientWinForms {
 			this->exitButton->Size = System::Drawing::Size(105, 50);
 			this->exitButton->TabIndex = 4;
 			this->exitButton->Text = L"Выйти из чата";
+			this->toolTip1->SetToolTip(this->exitButton, L"Покинуть текущий чат");
 			this->exitButton->UseVisualStyleBackColor = false;
 			this->exitButton->Click += gcnew System::EventHandler(this, &TheChatWindow::ExitButton_Click);
 			// 
@@ -314,6 +315,7 @@ namespace ClientWinForms {
 			this->exit->Size = System::Drawing::Size(124, 47);
 			this->exit->TabIndex = 3;
 			this->exit->Text = L"Выход";
+			this->toolTip1->SetToolTip(this->exit, L"Выйти из аккаунта");
 			this->exit->UseVisualStyleBackColor = true;
 			this->exit->Click += gcnew System::EventHandler(this, &TheChatWindow::Exit_Click);
 			// 
@@ -324,6 +326,7 @@ namespace ClientWinForms {
 			this->usersOnline->Size = System::Drawing::Size(124, 53);
 			this->usersOnline->TabIndex = 2;
 			this->usersOnline->Text = L"Список\nпользователей";
+			this->toolTip1->SetToolTip(this->usersOnline, L"Показать список пользователей. Первый пользователи - онлайн");
 			this->usersOnline->UseVisualStyleBackColor = true;
 			this->usersOnline->Click += gcnew System::EventHandler(this, &TheChatWindow::UsersOnline_Click);
 			// 
@@ -334,6 +337,7 @@ namespace ClientWinForms {
 			this->oldChats->Size = System::Drawing::Size(124, 48);
 			this->oldChats->TabIndex = 1;
 			this->oldChats->Text = L"Список чатов";
+			this->toolTip1->SetToolTip(this->oldChats, L"Показать список доступных чатов");
 			this->oldChats->UseVisualStyleBackColor = true;
 			this->oldChats->Click += gcnew System::EventHandler(this, &TheChatWindow::OldChats_Click);
 			// 
