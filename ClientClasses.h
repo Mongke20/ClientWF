@@ -112,3 +112,4 @@ map<int, int> tempChats;
 vector<string> oneMessage;
 //! Переменная, содержащая ник текущего пользователя
 string ourUser;
+string newChatMsgStr = "Для создания нового чата введите пользователей через запятую и нажмите кнопку \"Новый чат\"";
