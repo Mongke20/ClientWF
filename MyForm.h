@@ -155,7 +155,7 @@ namespace ClientWinForms {
 			// ConnectionStatus
 			// 
 			this->ConnectionStatus->AutoSize = true;
-			this->ConnectionStatus->Location = System::Drawing::Point(28, 175);
+			this->ConnectionStatus->Location = System::Drawing::Point(29, 180);
 			this->ConnectionStatus->Name = L"ConnectionStatus";
 			this->ConnectionStatus->Size = System::Drawing::Size(176, 17);
 			this->ConnectionStatus->TabIndex = 10;
@@ -164,7 +164,7 @@ namespace ClientWinForms {
 			// ConStatus
 			// 
 			this->ConStatus->AutoSize = true;
-			this->ConStatus->Location = System::Drawing::Point(210, 175);
+			this->ConStatus->Location = System::Drawing::Point(211, 180);
 			this->ConStatus->Name = L"ConStatus";
 			this->ConStatus->Size = System::Drawing::Size(75, 17);
 			this->ConStatus->TabIndex = 11;
@@ -295,7 +295,7 @@ namespace ClientWinForms {
 			// Resolve the server address and port
 			//46.17.104.142
 			//192.168.0.11
-			iResult = getaddrinfo("46.17.104.142", DEFAULT_PORT, &hints, &result);
+			iResult = getaddrinfo("192.168.0.11", DEFAULT_PORT, &hints, &result);
 			if (iResult != 0) {
 				NickField->ForeColor = Color::Red;
 				NickField->Text = "ERROR";				
@@ -350,10 +350,34 @@ namespace ClientWinForms {
 	
 	//!При нажатиии кнопки "Подключиться" скрывает эту форму, вызывает функцию Chat(), а после ее завершения снова показывает форму
 	private: System::Void ToConnect_Click(System::Object^ sender, System::EventArgs^ e) {
-		label2->Visible = false;
-		Hide();
-		Chat();
-		Show();
+		bool correctFields = true;
+		for (int i = 0; i < NickField->Text->Length; i++) {
+			if ((NickField->Text[i] >= '0' && NickField->Text[i] <= '9') || (NickField->Text[i] >= 'a' && NickField->Text[i] <= 'z') ||
+				(NickField->Text[i] >= 'A' && NickField->Text[i] <= 'Z')) continue;
+			else {
+				correctFields = false;
+				break;
+			}
+		}
+		if (correctFields) {
+			for (int i = 0; i < PasswordField->Text->Length; i++)
+				if ((PasswordField->Text[i] >= '0' && PasswordField->Text[i] <= '9') || (PasswordField->Text[i] >= 'a' && PasswordField->Text[i] <= 'z') ||
+					(PasswordField->Text[i] >= 'A' && PasswordField->Text[i] <= 'Z')) continue;
+				else {
+					correctFields = false;
+					break;
+				}
+		}
+		if (!correctFields) {
+			label2->Visible = true;
+			label2->Text = "  Логин и пароль должны\nсодержать только A-Z/a-z и 0-9 символы";
+		}
+		else {
+			label2->Visible = false;
+			Hide();
+			Chat();
+			Show();
+		}
 		//shutdown(ConnectSocket, SD_SEND);
 		//closesocket(ConnectSocket);
 		//WSACleanup();
