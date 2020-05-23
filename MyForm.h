@@ -149,6 +149,7 @@ namespace ClientWinForms {
 			this->ToConnect->Size = System::Drawing::Size(131, 34);
 			this->ToConnect->TabIndex = 2;
 			this->ToConnect->Text = L"Подключиться";
+			this->toolTip1->SetToolTip(this->ToConnect, L"Подключиться к серверу");
 			this->ToConnect->UseVisualStyleBackColor = true;
 			this->ToConnect->Click += gcnew System::EventHandler(this, &MyForm::ToConnect_Click);
 			// 

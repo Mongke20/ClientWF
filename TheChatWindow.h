@@ -326,7 +326,7 @@ namespace ClientWinForms {
 			this->usersOnline->Size = System::Drawing::Size(124, 53);
 			this->usersOnline->TabIndex = 2;
 			this->usersOnline->Text = L"Список\nпользователей";
-			this->toolTip1->SetToolTip(this->usersOnline, L"Показать список пользователей. Первый пользователи - онлайн");
+			this->toolTip1->SetToolTip(this->usersOnline, L"Показать список пользователей. Первые пользователи - онлайн");
 			this->usersOnline->UseVisualStyleBackColor = true;
 			this->usersOnline->Click += gcnew System::EventHandler(this, &TheChatWindow::UsersOnline_Click);
 			// 
