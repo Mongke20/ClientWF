@@ -148,7 +148,7 @@ namespace ClientWinForms {
 			this->tabPage2->Location = System::Drawing::Point(4, 25);
 			this->tabPage2->Name = L"tabPage2";
 			this->tabPage2->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage2->Size = System::Drawing::Size(712, 403);
+			this->tabPage2->Size = System::Drawing::Size(712, 390);
 			this->tabPage2->TabIndex = 1;
 			this->tabPage2->Text = L"Chat";
 			this->tabPage2->UseVisualStyleBackColor = true;
@@ -168,35 +168,38 @@ namespace ClientWinForms {
 			// usersInChat
 			// 
 			this->usersInChat->Enabled = false;
-			this->usersInChat->Location = System::Drawing::Point(596, 14);
+			this->usersInChat->Location = System::Drawing::Point(596, 6);
 			this->usersInChat->Multiline = true;
 			this->usersInChat->Name = L"usersInChat";
 			this->usersInChat->ReadOnly = true;
 			this->usersInChat->Size = System::Drawing::Size(105, 300);
 			this->usersInChat->TabIndex = 3;
+			this->toolTip1->SetToolTip(this->usersInChat, L"список пользователей в этом чате");
 			// 
 			// oldMessages
 			// 
 			this->oldMessages->Enabled = false;
-			this->oldMessages->Location = System::Drawing::Point(10, 15);
+			this->oldMessages->Location = System::Drawing::Point(10, 6);
 			this->oldMessages->Multiline = true;
 			this->oldMessages->Name = L"oldMessages";
 			this->oldMessages->ReadOnly = true;
 			this->oldMessages->Size = System::Drawing::Size(575, 300);
 			this->oldMessages->TabIndex = 1;
+			this->toolTip1->SetToolTip(this->oldMessages, L"История сообщений этого чата");
 			// 
 			// newMessage
 			// 
-			this->newMessage->Location = System::Drawing::Point(10, 326);
+			this->newMessage->Location = System::Drawing::Point(10, 317);
 			this->newMessage->Multiline = true;
 			this->newMessage->Name = L"newMessage";
 			this->newMessage->Size = System::Drawing::Size(575, 67);
 			this->newMessage->TabIndex = 0;
+			this->toolTip1->SetToolTip(this->newMessage, L"Поле для ввода сообщения");
 			// 
 			// sendMessage
 			// 
 			this->sendMessage->BackColor = System::Drawing::Color::LightGreen;
-			this->sendMessage->Location = System::Drawing::Point(596, 327);
+			this->sendMessage->Location = System::Drawing::Point(596, 319);
 			this->sendMessage->Name = L"sendMessage";
 			this->sendMessage->Size = System::Drawing::Size(106, 65);
 			this->sendMessage->TabIndex = 2;
@@ -212,7 +215,7 @@ namespace ClientWinForms {
 			this->tabControl1->Location = System::Drawing::Point(0, 0);
 			this->tabControl1->Name = L"tabControl1";
 			this->tabControl1->SelectedIndex = 0;
-			this->tabControl1->Size = System::Drawing::Size(720, 432);
+			this->tabControl1->Size = System::Drawing::Size(720, 419);
 			this->tabControl1->TabIndex = 0;
 			this->tabControl1->SelectedIndexChanged += gcnew System::EventHandler(this, &TheChatWindow::tabControl1_SelectedIndexChanged);
 			// 
@@ -230,7 +233,7 @@ namespace ClientWinForms {
 			this->tabPage1->Location = System::Drawing::Point(4, 25);
 			this->tabPage1->Name = L"tabPage1";
 			this->tabPage1->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage1->Size = System::Drawing::Size(712, 403);
+			this->tabPage1->Size = System::Drawing::Size(712, 390);
 			this->tabPage1->TabIndex = 0;
 			this->tabPage1->Text = L"Menu";
 			this->tabPage1->UseVisualStyleBackColor = true;
@@ -248,7 +251,7 @@ namespace ClientWinForms {
 			// 
 			// UserList
 			// 
-			this->UserList->ColumnWidth = 50;
+			this->UserList->ColumnWidth = 55;
 			this->UserList->ForeColor = System::Drawing::Color::Black;
 			this->UserList->FormattingEnabled = true;
 			this->UserList->ItemHeight = 16;
@@ -256,8 +259,9 @@ namespace ClientWinForms {
 			this->UserList->MultiColumn = true;
 			this->UserList->Name = L"UserList";
 			this->UserList->SelectionMode = System::Windows::Forms::SelectionMode::MultiSimple;
-			this->UserList->Size = System::Drawing::Size(268, 180);
+			this->UserList->Size = System::Drawing::Size(275, 180);
 			this->UserList->TabIndex = 11;
+			this->toolTip1->SetToolTip(this->UserList, L"Список пользователей чата");
 			// 
 			// ChatListBox
 			// 
@@ -265,18 +269,20 @@ namespace ClientWinForms {
 			this->ChatListBox->ItemHeight = 16;
 			this->ChatListBox->Location = System::Drawing::Point(160, 6);
 			this->ChatListBox->Name = L"ChatListBox";
-			this->ChatListBox->Size = System::Drawing::Size(552, 180);
+			this->ChatListBox->Size = System::Drawing::Size(550, 180);
 			this->ChatListBox->TabIndex = 10;
+			this->toolTip1->SetToolTip(this->ChatListBox, L"Список Ваших чатов");
 			this->ChatListBox->DoubleClick += gcnew System::EventHandler(this, &TheChatWindow::ChatListBox_DoubleClick);
 			// 
 			// ChatUsers
 			// 
 			this->ChatUsers->AcceptsTab = true;
-			this->ChatUsers->Location = System::Drawing::Point(428, 201);
+			this->ChatUsers->Location = System::Drawing::Point(435, 201);
 			this->ChatUsers->Multiline = true;
 			this->ChatUsers->Name = L"ChatUsers";
-			this->ChatUsers->Size = System::Drawing::Size(281, 180);
+			this->ChatUsers->Size = System::Drawing::Size(275, 180);
 			this->ChatUsers->TabIndex = 5;
+			this->toolTip1->SetToolTip(this->ChatUsers, L"Поле для ввода пользователей");
 			this->ChatUsers->MouseClick += gcnew System::Windows::Forms::MouseEventHandler(this, &TheChatWindow::ChatUsers_MouseClick);
 			// 
 			// infoTextBox
@@ -286,7 +292,7 @@ namespace ClientWinForms {
 			this->infoTextBox->Multiline = true;
 			this->infoTextBox->Name = L"infoTextBox";
 			this->infoTextBox->ReadOnly = true;
-			this->infoTextBox->Size = System::Drawing::Size(549, 375);
+			this->infoTextBox->Size = System::Drawing::Size(550, 375);
 			this->infoTextBox->TabIndex = 4;
 			// 
 			// exit
@@ -345,9 +351,12 @@ namespace ClientWinForms {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(720, 432);
+			this->ClientSize = System::Drawing::Size(724, 423);
 			this->Controls->Add(this->tabControl1);
+			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::Fixed3D;
 			this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
+			this->MaximumSize = System::Drawing::Size(742, 470);
+			this->MinimumSize = System::Drawing::Size(742, 470);
 			this->Name = L"TheChatWindow";
 			this->Text = L"TheChatWindow";
 			this->FormClosing += gcnew System::Windows::Forms::FormClosingEventHandler(this, &TheChatWindow::TheChatWindow_FormClosing);
@@ -813,6 +822,7 @@ private: System::Void Timer1_Tick(System::Object^ sender, System::EventArgs^ e) 
 //! При нажатии на кнопку отправить сообщение во 2 вкладке вызывается функция отправки
 private: System::Void SendMessage_Click(System::Object^ sender, System::EventArgs^ e) {
 	TheSender();
+	newMessage->Text = "";
 }
 
 //! При нажатии на кнопку список чатов вызывается функция получения чатов

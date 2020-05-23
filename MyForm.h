@@ -212,6 +212,7 @@ namespace ClientWinForms {
 			this->Controls->Add(this->ToConnect);
 			this->Controls->Add(this->LabelNick);
 			this->Controls->Add(this->NickField);
+			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::Fixed3D;
 			this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
 			this->Name = L"MyForm";
 			this->Text = L"¬ход";
