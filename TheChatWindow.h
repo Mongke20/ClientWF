@@ -148,7 +148,7 @@ namespace ClientWinForms {
 			this->tabPage2->Location = System::Drawing::Point(4, 25);
 			this->tabPage2->Name = L"tabPage2";
 			this->tabPage2->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage2->Size = System::Drawing::Size(712, 403);
+			this->tabPage2->Size = System::Drawing::Size(712, 390);
 			this->tabPage2->TabIndex = 1;
 			this->tabPage2->Text = L"Chat";
 			this->tabPage2->UseVisualStyleBackColor = true;
@@ -168,35 +168,38 @@ namespace ClientWinForms {
 			// usersInChat
 			// 
 			this->usersInChat->Enabled = false;
-			this->usersInChat->Location = System::Drawing::Point(596, 14);
+			this->usersInChat->Location = System::Drawing::Point(596, 6);
 			this->usersInChat->Multiline = true;
 			this->usersInChat->Name = L"usersInChat";
 			this->usersInChat->ReadOnly = true;
 			this->usersInChat->Size = System::Drawing::Size(105, 300);
 			this->usersInChat->TabIndex = 3;
+			this->toolTip1->SetToolTip(this->usersInChat, L"список пользователей в этом чате");
 			// 
 			// oldMessages
 			// 
 			this->oldMessages->Enabled = false;
-			this->oldMessages->Location = System::Drawing::Point(10, 15);
+			this->oldMessages->Location = System::Drawing::Point(10, 6);
 			this->oldMessages->Multiline = true;
 			this->oldMessages->Name = L"oldMessages";
 			this->oldMessages->ReadOnly = true;
 			this->oldMessages->Size = System::Drawing::Size(575, 300);
 			this->oldMessages->TabIndex = 1;
+			this->toolTip1->SetToolTip(this->oldMessages, L"История сообщений этого чата");
 			// 
 			// newMessage
 			// 
-			this->newMessage->Location = System::Drawing::Point(10, 326);
+			this->newMessage->Location = System::Drawing::Point(10, 317);
 			this->newMessage->Multiline = true;
 			this->newMessage->Name = L"newMessage";
 			this->newMessage->Size = System::Drawing::Size(575, 67);
 			this->newMessage->TabIndex = 0;
+			this->toolTip1->SetToolTip(this->newMessage, L"Поле для ввода сообщения");
 			// 
 			// sendMessage
 			// 
 			this->sendMessage->BackColor = System::Drawing::Color::LightGreen;
-			this->sendMessage->Location = System::Drawing::Point(596, 327);
+			this->sendMessage->Location = System::Drawing::Point(596, 319);
 			this->sendMessage->Name = L"sendMessage";
 			this->sendMessage->Size = System::Drawing::Size(106, 65);
 			this->sendMessage->TabIndex = 2;
@@ -212,7 +215,7 @@ namespace ClientWinForms {
 			this->tabControl1->Location = System::Drawing::Point(0, 0);
 			this->tabControl1->Name = L"tabControl1";
 			this->tabControl1->SelectedIndex = 0;
-			this->tabControl1->Size = System::Drawing::Size(720, 432);
+			this->tabControl1->Size = System::Drawing::Size(720, 419);
 			this->tabControl1->TabIndex = 0;
 			this->tabControl1->SelectedIndexChanged += gcnew System::EventHandler(this, &TheChatWindow::tabControl1_SelectedIndexChanged);
 			// 
@@ -230,7 +233,7 @@ namespace ClientWinForms {
 			this->tabPage1->Location = System::Drawing::Point(4, 25);
 			this->tabPage1->Name = L"tabPage1";
 			this->tabPage1->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage1->Size = System::Drawing::Size(712, 403);
+			this->tabPage1->Size = System::Drawing::Size(712, 390);
 			this->tabPage1->TabIndex = 0;
 			this->tabPage1->Text = L"Menu";
 			this->tabPage1->UseVisualStyleBackColor = true;
@@ -248,7 +251,7 @@ namespace ClientWinForms {
 			// 
 			// UserList
 			// 
-			this->UserList->ColumnWidth = 50;
+			this->UserList->ColumnWidth = 55;
 			this->UserList->ForeColor = System::Drawing::Color::Black;
 			this->UserList->FormattingEnabled = true;
 			this->UserList->ItemHeight = 16;
@@ -256,8 +259,9 @@ namespace ClientWinForms {
 			this->UserList->MultiColumn = true;
 			this->UserList->Name = L"UserList";
 			this->UserList->SelectionMode = System::Windows::Forms::SelectionMode::MultiSimple;
-			this->UserList->Size = System::Drawing::Size(268, 180);
+			this->UserList->Size = System::Drawing::Size(275, 180);
 			this->UserList->TabIndex = 11;
+			this->toolTip1->SetToolTip(this->UserList, L"Список пользователей чата");
 			// 
 			// ChatListBox
 			// 
@@ -265,18 +269,20 @@ namespace ClientWinForms {
 			this->ChatListBox->ItemHeight = 16;
 			this->ChatListBox->Location = System::Drawing::Point(160, 6);
 			this->ChatListBox->Name = L"ChatListBox";
-			this->ChatListBox->Size = System::Drawing::Size(552, 180);
+			this->ChatListBox->Size = System::Drawing::Size(550, 180);
 			this->ChatListBox->TabIndex = 10;
+			this->toolTip1->SetToolTip(this->ChatListBox, L"Список Ваших чатов");
 			this->ChatListBox->DoubleClick += gcnew System::EventHandler(this, &TheChatWindow::ChatListBox_DoubleClick);
 			// 
 			// ChatUsers
 			// 
 			this->ChatUsers->AcceptsTab = true;
-			this->ChatUsers->Location = System::Drawing::Point(428, 201);
+			this->ChatUsers->Location = System::Drawing::Point(435, 201);
 			this->ChatUsers->Multiline = true;
 			this->ChatUsers->Name = L"ChatUsers";
-			this->ChatUsers->Size = System::Drawing::Size(281, 180);
+			this->ChatUsers->Size = System::Drawing::Size(275, 180);
 			this->ChatUsers->TabIndex = 5;
+			this->toolTip1->SetToolTip(this->ChatUsers, L"Поле для ввода пользователей");
 			this->ChatUsers->MouseClick += gcnew System::Windows::Forms::MouseEventHandler(this, &TheChatWindow::ChatUsers_MouseClick);
 			// 
 			// infoTextBox
@@ -286,7 +292,7 @@ namespace ClientWinForms {
 			this->infoTextBox->Multiline = true;
 			this->infoTextBox->Name = L"infoTextBox";
 			this->infoTextBox->ReadOnly = true;
-			this->infoTextBox->Size = System::Drawing::Size(549, 375);
+			this->infoTextBox->Size = System::Drawing::Size(550, 375);
 			this->infoTextBox->TabIndex = 4;
 			// 
 			// exit
@@ -345,9 +351,12 @@ namespace ClientWinForms {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(720, 432);
+			this->ClientSize = System::Drawing::Size(724, 423);
 			this->Controls->Add(this->tabControl1);
+			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::Fixed3D;
 			this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
+			this->MaximumSize = System::Drawing::Size(742, 470);
+			this->MinimumSize = System::Drawing::Size(742, 470);
 			this->Name = L"TheChatWindow";
 			this->Text = L"TheChatWindow";
 			this->FormClosing += gcnew System::Windows::Forms::FormClosingEventHandler(this, &TheChatWindow::TheChatWindow_FormClosing);
@@ -397,7 +406,9 @@ namespace ClientWinForms {
 	//! Переменная для отладки
 	int CurID = 0;
 	bool TimeDo = false;
+	//! Переменная-флаг для очистки поля ввода пользователей нового чата от информационного сообщения
 	bool clearChatUsers = false;
+	//! Переменная для хранения информационного сообщения для создания нового чата
 	System::String ^ newChatMsg = gcnew System::String(newChatMsgStr.c_str());
 
 	//!Функция для перевода строки System::String в std::string
@@ -410,6 +421,7 @@ namespace ClientWinForms {
 	}
 
 	/*! \brief Функция для получения списка чатов
+
 	Формирует запрос и отправляет его на сервер. После того, как в другом потоке сообщения от сервера получены, обработаны
 	и вставленны в вектор, эта функция заполняет ListBox по одному чату в каждый пункт. Затем и вектор, и экземпляр класса
 	для пересылки запросов очищаются.
@@ -431,8 +443,12 @@ namespace ClientWinForms {
 		getCl.text = " ";
 	}
 
-	/*! Переносит список пользователей в чате (строка, полученная в первом аргументе) во вкладку с чатом.
-	Второй аргумент нужен для обрезки непечатных символов в конце строки, если это необходимо
+	/*! \brief Перенос списка пользователей в специальное поле
+	
+	\param froms - строка со списком пользователей
+	\param cut - целое число, количество непечатных символов в конце строки (возможно, 0)
+
+	Переносит список пользователей в чате во вкладку с чатом.
 	*/
 	void CUWithLines(String^ froms, int cut) {
 		usersInChat->Text = "";
@@ -445,6 +461,7 @@ namespace ClientWinForms {
 	}
 
 	/*! \brief Функция для получения списка пользователей
+
 	Формирует запрос и отправляет его на сервер. После того, как в другом потоке сообщения от сервера получены, обработаны
 	и вставленны в вектор, эта функция заполняет ListBox по одному пользователю в каждый пункт. Затем и вектор, и экземпляр
 	класса для пересылки запросов очищаются.
@@ -467,6 +484,9 @@ namespace ClientWinForms {
 	}
 
 	/*! \brief Функция для получения не более, чем 40 сообщений в открытый чат
+
+	\param ChatIDStr - строка с кодом чата
+
 	Формирует запрос и отправляет его на сервер. После того, как в другом потоке сообщения от сервера получены, обработаны
 	и вставленны в вектор, эта функция переносит их из вектора в textBox. Затем и вектор, и экземпляр класса для пересылки
 	запросов очищаются.
@@ -487,13 +507,21 @@ namespace ClientWinForms {
 		getCl.text = " ";
 	}
 
-	//! Функция для получения сообщения. Разбивает строку на поля по служебному символу "@". Возвращает вектор строк
+	/*! \brief Функция для получения сообщения.
+
+	\param text - строка-сообщение, полученная от сервера
+	\return вектор строк
+	
+	Разбивает строку на поля по служебному символу "@". Возвращает вектор строк
+	- первая часть - это отправитель
+	- вторая часть - это дата
+	- третья часть - это время вместе с самим сообщением
+	*/
 	vector<string> GetMessage(string text) {
 		vector<string> result;
 		try {
 			int position = 0;
 			int oldpoz = position;
-			//Первая часть - это отправитель
 			while (position < text.length() && text[position] != '@') {
 				position++;
 			}
@@ -501,14 +529,12 @@ namespace ClientWinForms {
 			result.push_back(PersonFrom);
 			position++;
 			oldpoz = position;
-			//Вторая часть - это дата
 			while (position < text.length() && text[position] != '@') {
 				position++;
 			}
 			string DateFrom = text.substr(oldpoz, position - oldpoz);
 			result.push_back(DateFrom);
 			position++;
-			//Третья часть - это время вместе с самим сообщением
 			string timeMessage = text.substr(position);
 			result.push_back(timeMessage);
 		}
@@ -519,7 +545,8 @@ namespace ClientWinForms {
 		return result;
 	}
 
-	/*! Функция для отладки. Выводит текущее время.
+	/*! \brief Функция для отладки. Выводит текущее время.
+
 	Нужна для отслеживания времени, которое требуется программе для выполнения тех или иных действий, в том числе
 	взаимодействия с сервером
 	*/
@@ -533,7 +560,11 @@ namespace ClientWinForms {
 		newMessage->Text += gcnew System::String(str.c_str()) + "\r\n";
 	}
 
-	//!Приводит сообщение (вектор) к форматированному виду (строка)
+	/*! Приводит сообщение (вектор) к форматированному виду (строка)
+
+	\param v - вектор из строк, одно сообщение
+	\return строка в нужном формате (с разделителями между частями сообщения)
+	*/
 	String^ formatStr(vector<string> v) {
 		String^ result;
 		result += gcnew System::String(v[0].c_str());
@@ -545,6 +576,15 @@ namespace ClientWinForms {
 		return result;
 	}
 	
+
+	/*! \brief Функция для проверки корректности запроса на новый чат
+
+	\param froms строка со списком пользователей для нового чата
+	\return вектор строк, список пользователей из запроса, которые не существуют
+
+	Проверяет, существуют ли введенные пользователи, и если нет, пишет список тех из них, кто не существует,
+	с информационным сообщением.
+	*/
 	vector<string> checkChat(String^ froms) {
 		int pos = 0;
 		int prevPos = 0;
@@ -570,6 +610,7 @@ namespace ClientWinForms {
 
 
 	/*! \brief Функция для получения всех сообщений от сервера и их идентификации
+
 	В бесконечном цикле получает сообщения от сервера при помощи сокетов. Разбивает их на код и текст. В зависимости
 	от кода, размещает текст полученных сообщений в соответствующих векторах. Меняет переменную getCounter, чтобы сообщить
 	функциям в другом потоке, что все сообщения по данному запросу полученны.
@@ -583,27 +624,27 @@ namespace ClientWinForms {
 			do {
 				int msgS = 0;
 				recv(d1.TheSock, (char*)& msgS, sizeof(int), 0);
-				char* msg = new char[msgS + 2]; //! Переменная для получения очередного сообщения от сервера
+				char* msg = new char[msgS + 2]; //! msg - переменная для получения очередного сообщения от сервера
 				iResult = recv(d1.TheSock, msg, msgS, 0);
 				msg[msgS] = '\n';
 				msg[msgS + 1] = '\0';
-				string msgStr = msg; //! Переменная типа string для дальнейшей работы с сообщением
+				string msgStr = msg; //! msgStr - переменная типа string для дальнейшей работы с сообщением
 				delete[]msg;
 				if (iResult > 0) {
-					int position = 0; //! Позиция в строке при разбиении ее на код и текст
+					int position = 0; //! position - позиция в строке при разбиении ее на код и текст
 					while (position < msgStr.length() && msgStr[position] != '@') {
 						position++;
 					}
-					int code = stoi(msgStr.substr(0, position)); //! Код полученного сообщения
+					int code = stoi(msgStr.substr(0, position)); //! code - код полученного сообщения
 					CurID = code;
-					string text = msgStr.substr(position + 1); //! Текст полученного сообщения
-					//! Получение ответа на создание нового чата
+					string text = msgStr.substr(position + 1); //! text - текст полученного сообщения
+					// Получение ответа на создание нового чата
 					if (code == -10) {
 						chatID = stoi(text);
 						NewChat.code = code;
 						NewChat.text = text;
 					}
-					//! Получение списка доступных чатов
+					// Получение списка доступных чатов
 					else if (code == -100) {						
 						if (getCounter == 0) {
 							getCounter = stoi(text);
@@ -612,14 +653,14 @@ namespace ClientWinForms {
 							if (getCounter == 0) getCounter--;
 						}
 						else {
-							position = 0; //! Позиция в строке при разбиении ее на код чата и список пользователей
+							position = 0;
 							while (position < text.length() && text[position] != '@') {
 								position++;
 							}
-							string ChatIDStr = text.substr(0, position++); //! Код чата
-							string TheChatUsers = text.substr(position); //! Список пользователей в чате
+							string ChatIDStr = text.substr(0, position++); //! ChatIDStr - код чата
+							string TheChatUsers = text.substr(position); //! TheChatUsers - список пользователей в чате
 							Chats[stoi(ChatIDStr)] = tempChats[stoi(ChatIDStr)];
-							//! Форматированная строка с информацией о чате для записи её в listBox
+							//! newChat - форматированная строка с информацией о чате для записи её в listBox
 							string newChat = ChatIDStr + '(' + to_string(tempChats[stoi(ChatIDStr)]) + ") " + TheChatUsers + "\r\n";
 							getCl.text += newChat;
 							ChatListVector.push_back(newChat);
@@ -627,13 +668,13 @@ namespace ClientWinForms {
 							else getCounter--;
 						}
 					}
-					//! Получение списка пользователей
+					// Получение списка пользователей
 					else if (code == -1000) {
 						userListVector.clear();
-						int prevPos = 0; //! Предыдущая позиция символа в строке для выделения подстроки
+						int prevPos = 0; //! prevPos - предыдущая позиция символа в строке для выделения подстроки
 						while (text[prevPos] != '@') prevPos++;
 
-						int n = stoi(text.substr(0, prevPos)); //! Количество пользователей онлайн
+						int n = stoi(text.substr(0, prevPos)); //! n - количество пользователей онлайн
 						UsersCount = n;
 						prevPos++;
 						for (int i = prevPos; i < text.length(); i++) {
@@ -645,7 +686,7 @@ namespace ClientWinForms {
 						userListVector.push_back(text.substr(prevPos, text.length() - prevPos - 1));
 						getCounter = -1;
 					}
-					//! Получение не более, чем 40 сообщений в открытый чат
+					// Получение не более, чем 40 сообщений в открытый чат
 					else if (code == -20) {
 						if (getCounter == 0) {
 							getCounter = stoi(text);
@@ -657,7 +698,7 @@ namespace ClientWinForms {
 							else getCounter--;
 						}
 					}
-					//! Получение сообщений, отправленных кем-то прямо сейчас, по одному, в какой-либо чат.
+					// Получение сообщений, отправленных кем-то прямо сейчас, по одному, в какой-либо чат.
 					else if (code > 0) {
 						Chats[code]++;
 						ToChange = gcnew System::String(text.c_str());
@@ -685,7 +726,7 @@ namespace ClientWinForms {
 	//! Функция отправки сообщения в чат
 	void TheSender() {
 		try {
-			std::string str; //Строка, в которую записывается сообщение из textBox
+			std::string str; //! str - строка, в которую записывается сообщение из textBox
 			str = SystemToStl(newMessage->Text);
 			toSend.code = chatID;
 			toSend.text = str;
@@ -698,6 +739,7 @@ namespace ClientWinForms {
 	}
 
 	/*! \brief Функция при нажатии на кнопку "Новый чат"
+
 	Скрывает список чатов, появляется поле для ввода пользователей, которые должны быть в новом чате.
 	Когда пользователь введет список ников через запятую, отправляет запрос на сервер. Затем ждет, когда объект класса,
 	использующийся для создания нового чата, изменится. В поле text вместо списка пользователей появится код созданного
@@ -743,8 +785,10 @@ namespace ClientWinForms {
 		}
 	}
 
-/*! События при загрузке формы
-В заголовок окна записывается ник текущего пользователя. Запускается поток для постоянного приема сообщений от сервера.
+/*! \brief События при загрузке формы
+
+В заголовок окна записывается ник текущего пользователя. В окно для создания нового чата записывается информационное
+сообщение. Выставляется флаг для его очистки по клику. Запускается поток для постоянного приема сообщений от сервера.
 Запускается таймер для получения новых сообщений. Для второго таймера выставляется интервал ожидания, который будет нужен
 при закрытии формы.
 */
@@ -778,6 +822,7 @@ private: System::Void Timer1_Tick(System::Object^ sender, System::EventArgs^ e) 
 //! При нажатии на кнопку отправить сообщение во 2 вкладке вызывается функция отправки
 private: System::Void SendMessage_Click(System::Object^ sender, System::EventArgs^ e) {
 	TheSender();
+	newMessage->Text = "";
 }
 
 //! При нажатии на кнопку список чатов вызывается функция получения чатов
@@ -785,8 +830,9 @@ private: System::Void OldChats_Click(System::Object^ sender, System::EventArgs^ 
 	GetChats();
 }
 
+/*!  \brief Выбор чата из списка
 
-/*! При двойном клике на чат в списке чатов вторая вкладка открывается с этим чатом и отправляется запрос
+При двойном клике на чат в списке чатов вторая вкладка открывается с этим чатом и отправляется запрос
 на получение истории сообщений в этот чат
 */
 	private: System::Void ChatListBox_DoubleClick(System::Object^ sender, System::EventArgs^ e) {
@@ -794,9 +840,9 @@ private: System::Void OldChats_Click(System::Object^ sender, System::EventArgs^ 
 		if (ChatListBox->SelectedIndex >= 0) {
 			//Переключение на вторую вкладку
 			tabControl1->SelectedIndex = 1;
-			//! Строка из пункта списка чатов для разбиения на код чата и список пользователей
+			//! chatString - строка из пункта списка чатов для разбиения на код чата и список пользователей
 			string chatString = SystemToStl(ChatListBox->SelectedItem->ToString());
-			int position = 0; //! Позиция в строке при разбиении её на части при помощи substr
+			int position = 0; // Позиция в строке при разбиении её на части при помощи substr
 			while (chatString[position] != '(') {
 				position++;
 			}
@@ -825,7 +871,7 @@ private: System::Void TheChatWindow_FormClosing(System::Object^ sender, System::
 //! Выход из чата. Отправляет запрос серверу на выход из чата. Переходит на первую вкладку. Очищает историю сообщений чата
 private: System::Void ExitButton_Click(System::Object^ sender, System::EventArgs^ e) {
 	tabControl1->SelectedIndex = 0;
-	MsgCl toExitChat(-30,to_string(chatID)); //! Экземпляр класса для отправки запроса на выход из чата
+	MsgCl toExitChat(-30,to_string(chatID)); //! toExitChat - экземпляр класса для отправки запроса на выход из чата
 	toExitChat.Send();
 	oldMessages->Text = "";
 	newMessage->Text = "";
@@ -841,17 +887,22 @@ private: System::Void Timer2_Tick(System::Object^ sender, System::EventArgs^ e) 
 	else closeCounter++;
 }
 
-/*! Получение списка пользователей.
+/*! \brief Получение списка пользователей.
+
 При нажатии на кнопку вызывает соответствующую функцию. Сначала выводятся те пользователи, которые сейчас онлайн,
 потом все остальные. Внутри группы пользователи сортируются в алфавитном порядке
 */
 private: System::Void UsersOnline_Click(System::Object^ sender, System::EventArgs^ e) {
 	GetUsers();
 }
+
+//! Очистка поля для создания нового чата по клику, если стоит флаг необходимости очистки
 private: System::Void ChatUsers_MouseClick(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e) {
 	if (clearChatUsers) ChatUsers->Text = "";
 	clearChatUsers = false;
 }
+
+//! Действия при возврате к вкладке меню
 private: System::Void tabControl1_SelectedIndexChanged(System::Object^ sender, System::EventArgs^ e) {
 	if (tabControl1->SelectedIndex == 0) {
 		ChatUsers->Text = newChatMsg;
