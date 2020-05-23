@@ -258,9 +258,9 @@ namespace ClientWinForms {
 
 		/*! \brief Функция проверки статуса, т.е. ответа сервера.
 
-		"Подключено" - при успешном подключении
-		"Неправильный пароль!" - если пароль введен неправильно
-		"Такой пользователь уже подключен!" - если такой пользователь уже онлайн с другого устройства
+		- "Подключено" - при успешном подключении
+		- "Неправильный пароль!" - если пароль введен неправильно
+		- "Такой пользователь уже подключен!" - если такой пользователь уже онлайн с другого устройства
 		*/
 		std::string CheckStatus(SOCKET ConSock) {
 			int StatusSize;
@@ -296,7 +296,7 @@ namespace ClientWinForms {
 			// Resolve the server address and port
 			//46.17.104.142
 			//192.168.0.11
-			iResult = getaddrinfo("192.168.0.11", DEFAULT_PORT, &hints, &result);
+			iResult = getaddrinfo("46.17.104.142", DEFAULT_PORT, &hints, &result);
 			if (iResult != 0) {
 				NickField->ForeColor = Color::Red;
 				NickField->Text = "ERROR";				
